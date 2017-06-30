@@ -1,0 +1,57 @@
+solution_id	Solution Identifier	long
+source_id	Unique source identifier	long
+random_index	Random index used to select subsets	long
+ref_epoch	Reference epoch	double	Julian Year
+ra	Right ascension	double	deg
+ra_error	Standard error of right ascension	double	mas
+dec	Declination	double	deg
+dec_error	Standard error of declination	double	mas
+parallax	Parallax	double	mas
+parallax_error	Standard error of parallax	double	mas
+pmra	Proper motion in right ascension direction	double	mas/year
+pmra_error	Standard error of proper motion in right ascension direction	double	mas/year
+pmdec	Proper motion in declination direction	double	mas/year
+pmdec_error	Standard error of proper motion in declination direction	double	mas/year
+ra_dec_corr	Correlation between right ascension and declination	float
+ra_parallax_corr	Correlation between right ascension and parallax	float
+ra_pmra_corr	Correlation between right ascension and p.m. in r.a.	float
+ra_pmdec_corr	Correlation between right ascension and p.m. in declination	float
+dec_parallax_corr	Correlation between declination and parallax	float
+dec_pmra_corr	Correlation between declination and p.m. in right ascension	float
+dec_pmdec_corr	Correlation between declination and p.m. in declination	float
+parallax_pmra_corr	Correlation between parallax and p.m. in right ascension	float
+parallax_pmdec_corr	Correlation between parallax and p.m. in declination	float
+pmra_pmdec_corr	Correlation between p.m. in r.a. and p.m. in declination	float
+astrometric_n_obs_al	Total number of observations AL	int
+astrometric_n_obs_ac	Total number of observations AC	int
+astrometric_n_good_obs_al	Number of good observations AL	int
+astrometric_n_good_obs_ac	Number of good observations AC	int
+astrometric_n_bad_obs_al	Number of bad observations AL	int
+astrometric_n_bad_obs_ac	Number of bad observations AC	int
+astrometric_delta_q	Hipparcos/Gaia discrepancy (Hipparcos TGAS subset only)	float
+astrometric_excess_noise	Excess noise of the source	double	mas
+astrometric_excess_noise_sig	Significance of excess noise	double
+astrometric_primary_flag	Primary or seconday	boolean
+astrometric_relegation_factor	Relegation factor	float
+astrometric_weight_al	Mean astrometric weight of the source	float	mas −2-2
+astrometric_weight_ac	Mean astrometric weight of the source	float	mas −2-2
+astrometric_priors_used	Type of prior used in in the astrometric solution	int
+matched_observations	Amount of observations matched to this source	short
+duplicated_source	Source with duplicate sources	boolean
+scan_direction_strength_k1	Degree of concentration of scan directions across the source	float
+scan_direction_strength_k2	Degree of concentration of scan directions across the source	float
+scan_direction_strength_k3	Degree of concentration of scan directions across the source	float
+scan_direction_strength_k4	Degree of concentration of scan directions across the source	float
+scan_direction_mean_k1	Mean position angle of scan directions across the source	float	deg
+scan_direction_mean_k2	Mean position angle of scan directions across the source	float	deg
+scan_direction_mean_k3	Mean position angle of scan directions across the source	float	deg
+scan_direction_mean_k4	Mean position angle of scan directions across the source	float	deg
+phot_g_n_obs	Number of observations contributing to G photometry	int
+phot_g_mean_flux	GG band mean flux	double	e −- s −1-1
+phot_g_mean_flux_error	Error on GG band mean flux	double	e −- s −1-1
+phot_g_mean_mag	GG band mean magnitude	double	mag
+phot_variable_flag	Photometric variability flag	string
+l	Galactic longitude	double	deg
+b	Galactic latitude	double	deg
+ecl_lon	Ecliptic longitude	double	deg
+ecl_lat	Ecliptic latitude	double	deg
