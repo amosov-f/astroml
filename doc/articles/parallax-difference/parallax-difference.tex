@@ -1,0 +1,326 @@
+\documentclass[12pt]{article}
+\usepackage[cp1251]{inputenc}
+\usepackage[russian]{babel}
+\usepackage{pazh}
+\usepackage{amsmath}
+%\inputencoding{cp1251}
+\usepackage{graphicx}
+\graphicspath{ {images/} }
+\usepackage{epsf}
+\tightenlines
+
+\voffset=10mm
+\hoffset=0mm
+\parindent 10mm
+
+%\renewcommand{\figurename}{Рис.}
+%\renewcommand{\tablename}{Таблица}
+%\newtheorem{theorem}{Теорема}[section]
+
+\newcommand{\noi}{\noindent}
+%\newcommand{\tg}{\mathop{\rm tg}\nolimits}
+\def\etal{{et~al.}}
+
+\sloppypar
+
+%%%%=========
+%%%\documentclass[useAMS,usenatbib]{article}
+%%%\usepackage[cp1251]{inputenc}
+%%%\usepackage[russian]{babel}
+%%%\usepackage{pazh}
+%%%\usepackage{natbib}
+%%%\usepackage{amsmath}
+%%%\inputencoding{cp1251}
+%%%\usepackage{graphicx}
+%%%\usepackage{epsf}
+%%%\tightenlines
+%%%\voffset=10mm \hoffset=0mm
+%%%\parindent 10mm
+%%%\newcommand{\noi}{\noindent}
+%%%\def\etal{{et~al.}}
+%%%\sloppypar
+%%%\def\aap{Astron. Astrophys.}
+%%%\def\aj{Astron.~J.}
+%%%\newcommand{\om}{\omega}
+%%%\newcommand{\qa}{\qquad}
+
+%%%%%=======
+
+
+\begin{document}
+\title{\bf Анализ систематических разностей параллаксов в каталогах TGAS и Hipparcos }
+\voffset=10mm \hoffset=0mm
+\parindent 10mm
+\author{\bf \hspace{-1.3cm}\copyright\, 2015 г. \ \
+}
+\def\etal{{et~al.}}
+\affil{ {\it Санкт-Петербургский государственный университет, СПб}$^1$}
+\sloppypar
+
+\sloppypar \vspace{2mm}
+
+\noindent  TODO
+
+\vspace{2mm}
+
+\noindent {\bf Ключевые слова:\/} астрометрия,  собственные движения звезд, параллаксы, сферические
+функции, Hipparcos
+
+
+%\tableofcontents \setcounter{secnumdepth}{0}
+\setcounter{tocdepth}{2}
+
+\section{Введение}
+
+TODO
+
+\section{Выбор общих звезд и построение разницы параллаксов}
+Из каталога TGAS нас будут интересовать поля
+\begin{itemize}
+    \item $hip$ – идентификатор звезды в каталоге Hipparcos
+    \item $parallax$ – абсолютный барицентрический параллакс звезды на момент эпохи каталога, указан в mas
+    \item $parallax\_error$ - стандартное отклонение параллакса звезды на момент эпохи каталога, указан в mas
+    \item $l$ – галактическая долгота на момент эпохи каталога, указана в градусах
+    \item $b$ – галактическая широта на момент эпохи каталога, указана в градусах
+\end{itemize}
+
+Из каталога XHIP (Extended Hipparcos Compilation) нас будут интересовать поля
+\begin{itemize}
+    \item $HIP$ – идентификатор звезды в каталоге Hipparcos
+    \item $Plx$ – тригонометрический параллакс звезды, указан в mas
+    \item $e\_Plx$ – стандартное отклонение параллакса звезды, указан в mas,
+    \item $Dist$ – расстояние до звезды в парсеках
+\end{itemize}
+
+За счет того, что у звезд обоих каталогов есть идентификатор в каталоге Hipparcos, их данные можно объединить.
+То есть в объединенном каталоге у каждой звезды помимо идентификатора в каталоге Hipparcos будут все прочие данные, 
+которые есть в каталогах TGAS и XHIP. В каталоге XHIP 117955 звезд. В каталоге TGAS 2057050 звезд. В объединенном каталоге 93635 звезд.
+
+
+\section{Построение и анализ разности параллаксов}
+
+Астрометрические каталоги за долгую историю сравнивали между собой всегда с целью выявления случайных 
+и особенно систематических ошибок на координаты и собственные движения. 
+Впервые в истории появляется возможность сравнить параллаксы, полученные тригонометрическим способом, 
+для столь большого количества звезд. К сожалению, параллаксы TGAS и XHIP не являются независимыми величинами. 
+Корректную процедуру сравнения удастся сделать лишь после выхода по крайней мере GAIA DR2 (ссылка),
+ где параллаксы будут получены независимо от данных Hipparcos. 
+
+Рассмотрим для каждой звезды объединенного каталога величину разности ее параллакса в TGAS и в XHIP, 
+т.е. $XHIP.plx - TGAS.parallax$ (про физический смысл ранее). 
+Ошибкой разности, соответственно, будет $\sqrt{XHIP.e\_Plx^2 + TGAS.parallax\_error^2}$
+Для начала выпишем различные статистические характеристики данной величины.
+Среднее значение – $0.35$ mas,
+Медиана – $0.29$ mas,
+Стандартное отклонение – $1.5$ mas,
+Среднее значение модуля - $1.04$ mas,
+Медиана модуля – $0.76$ mas,
+99 персентиль модуля – $4.78$ mas
+
+\begin{figure}[t]
+\begin{center}
+\includegraphics[scale=0.5]{diff_perc.png}
+    \caption{\rm
+    График перцентиля. По оси x – перцентиль; по оси y – соответствующее значение перцентиля. 
+    Так же отмечен 100-й перцентиль со значением $81.15$ mas
+    }
+\label{diff_perc}
+\end{center}
+\end{figure}
+
+\begin{figure}[t]
+\begin{center}
+    \includegraphics[scale=0.5]{diff_hist.png}
+     \caption{\rm
+    Гистограмма распределения модуля разности параллаксов XHIP и TGAS
+    }
+    \label{diff_hist}
+\end{center}
+\end{figure}
+
+\begin{figure}[t]
+\begin{center}
+    \includegraphics[scale=0.5]{diff_abs_hist.png}
+    \caption{\rm Гистограмма распределения разности параллаксов XHIP и TGAS. На гистограмме видно, 
+    что параллакс в Hipparcos больше, чем параллакс в TGAS, то есть по данным Hipparcos звезды находятся дальше.}
+\label{diff_abs_hist}
+ \end{center}
+\end{figure}
+
+\begin{figure}[t]
+\begin{center}
+    \includegraphics[scale=0.2]{med_abs_diff.png}
+    \includegraphics[scale=0.2]{med_abs_diff_eq.png}
+    \includegraphics[scale=0.2]{med_abs_diff_ecl.png}
+    \caption{\rm Распределение модуля разницы параллаксов XHIP и TGAS по небесной сфере в галактических,
+    экваториальных и эклиптических координатах. Усреднение в рамках одного <<пикселя>> Healpix осуществляется взятием медианы.}
+\label{med_abs_diff}
+ \end{center}
+\end{figure}
+
+\begin{figure}[t]
+\begin{center}
+    \includegraphics[scale=0.5]{count_all.png}
+    \caption{\rm Распределение звезд из объединенного каталога по небесной сфере}
+\label{count_all}
+ \end{center}
+\end{figure}
+
+\begin{figure}[t]
+\begin{center}
+    \includegraphics[scale=0.5]{count_with_dist.png}
+    \caption{\rm Распределение звезд из объединенного каталога по небесной сфере в галактических координатах, 
+    у которых в каталоге Hipparcos ошибка параллакса менее 20\%}
+\label{count_with_dist}
+ \end{center}
+\end{figure}
+
+
+Мы видим зависимость между распределениями на рис.~\ref{med_abs_diff} и рис.~\ref{count_with_dist}. 
+Коэффициент корреляции между ними равен $-0.5$. Это говорит о том, что чем больше звезд имеют ошибку параллакса менее $20$\%, 
+тем меньше в среднем отличаются их параллаксы в TGAS и в XHIP.
+Более того, коэффициент корреляции между модулем разности параллаксов и ошибкой параллакса в XHIP равен $0.55$. 
+Это говорит о том, что чем выше ошибка параллакса XHIP, тем сильнее он отличается от параллакса TGAS. 
+
+\section{Анализ больших выбросов}
+
+Теперь рассмотрим звезды, у которых точно есть ошибка в определении параллакса, либо в XHIP, либо в TGAS. 
+Определить такие звезды можно по принципу <<трех сигма>>. Выберем звезды объединенного каталога, 
+у которых модуль разности параллаксов больше, чем $3$ ошибки этой разности. Таких звезд $2148$. 
+Выясним, с чем связаны такие отличия в параллаксах. У таких звезд коэффициент корреляции модуля разности параллаксов 
+с ошибкой параллакса в XHIP равен $0.87$, а с ошибкой в TGAS --- $0.1$. Т.е. можно утверждать, 
+что большая разница между параллаксами обусловлена большими ошибками параллаксов именно в XHIP.
+
+\section{Анализ разностей с помощью сферических функций}
+
+На рис.~\ref{med_abs_diff} мы видим явную зависимость в распределении модуля отличия параллаксов по небесной сфере 
+от модуля эклиптической широты (коэффициент корреляции равен $-0.7$).
+ Подтвердить статистическую значимость данной зависимости и незначимость прочих 
+менее очевидных зависимостей мы можем с помощью представления модуля разности параллаксов через сферические функции. 
+Сферические функции широко используются в различных областях математики и физики,
+ их определение можно найти во многих источниках (см., например, Арфкен, 1970). 
+Представление модуля разницы параллаксов с помощью линейной комбинации сферических функций можно записать следующим образом. 
+
+\begin{equation} \label{Px -SF}
+    \Delta_{plx}(l,b)=\sum_{nkp}\delta_{nkp}\,{K}_{nkp}(l,b),
+\end{equation}
+
+\noi где   сферические функции   имеют вид (Арфкен, 1970):
+
+\begin{equation}
+\label{K}
+ K_{nkp}(l,b)=R_{nk}\left\{
+ \begin{array}{lll}
+  P_{n,0}(b), & k=0, & p=1;\\
+  P_{nk}(b)\sin k l, & k \neq 0, & p=0; \\
+  P_{nk}(b)\cos k l,& k \neq 0, & p=1, \\
+ \end{array}
+ \right.
+\end{equation}
+\vskip0.5 cm
+
+\begin{equation}
+ R_{nk}=\sqrt{\frac{2n+1}{4 \pi}} \left\{
+ \begin{array}{cl}
+ \sqrt{\frac{2(n-k)!}{(n+k)!}}, & k>0; \\
+  1, & k=0. \\
+ \end{array}
+ \right.
+\end{equation}
+
+В формуле (\ref{K}) через  $l$ и $b$ обозначены соответственно долгота и широта точки на сфере, ($0\leq l
+\leq 2\pi$; $-\pi /2 \leq b \leq \pi /2$);  через $P_{nk}(b)$
+---   полиномы Лежандра (при $k=0$) и присоединенные функции
+Лежандра (при $k>0$), которые можно вычислить  с помощью следующих рекуррентных соотношений:
+
+\begin{equation}
+ \begin{array}{l}
+   P_{nk}(b)=\sin b \frac{2n-1}{n-k} P_{n-1,k}(b)-\frac{n+k-1}{n-k}
+   P_{n-2,k}(b), \begin{array}{l} \scriptstyle{k=0, \, 1, \, \ldots}  \\ \scriptstyle{n=k+1,\, k+2, \, \ldots}  \\  \end{array} \\
+   P_{kk}(b)=\frac{(2k)!}{2^k k!} \cos^k b \\
+   \\
+   P_{k+1,k}(b)=\frac{(2k+2)!}{2^{k+1}(k+1)!}\cos^k b \sin b. \\
+ \end{array}
+\end{equation}
+
+
+Для удобства часто вводят линейную нумерацию функций $K_{nkp}$ и коэффициентов $\delta_{nkp}$ одним индексом $j$, где
+\begin{equation}
+ j=n^2+2k+p-1.
+\end{equation}
+
+Введенные функции  удовлетворяют  следующим соотношениям:
+
+\begin{equation}
+\label{VV1} \iint\limits_\Omega\left({K}_i\cdot{K}_j\right)d\omega
+%%%%=\iint\limits_\Omega\left(\textbf{T}_i\cdot\textbf{T}_j\right)d\omega
+%%%%=\iint\limits_\Omega\left(\textbf{S}_i\cdot\textbf{S}_j\right)d\omega
+= \left\{
+ \begin{array}{ll}
+  0, & i \neq j; \\
+  1, & i = j. \\
+ \end{array}
+ \right.
+\end{equation}
+
+
+\noindent Другими словами,  набор функций ${K}_{nkp}$ образуют на сфере ортонормированную систему функций.
+
+
+Найдем  методом наименьших квадратов первые 50 коэффициентов разложения $\delta_j$ на сферические функции 
+в эклиптической системе координат. Оставим только статистически значимые на уровне <<трех сигма>> коэффициенты. 
+То есть такие $\delta_j$, что $|\delta_j| > 3 \sigma_{\delta_j}$. 
+Данные коэффициенты с ошибками представлены в таблице~\ref{med_abs_diff_ecl_coeffs_table} и на рис.~\ref{med_abs_diff_ecl_coeffs}
+ 
+ \begin{table}[h!]
+  \centering
+  \caption{Статистически значимые коэффициенты разложения модуля разности параллаксов
+   по сферическим функциям в эклиптических координатах} \label{med_abs_diff_ecl_coeffs_table}
+  %\vskip0.3cm
+  \begin{tabular}{|c|c|c|c|c|}
+    \hline
+$j$    &    $\delta_j$    & $\sigma_{\delta_j}$    \\
+        \hline
+0    &     2.99    &    0.01    \\
+2    &    -0.04    &    0.01    \\
+4    &    -0.45    &    0.01    \\
+6    &    -0.10    &    0.01    \\
+7    &    0.07    &    0.01    \\
+16    &    -0.09    &    0.01    \\
+21    &    -0.05    &    0.01    \\
+41    &    0.06    &    0.01    \\
+\hline
+  \end{tabular}
+%\flushleft
+\end{table}
+
+\begin{figure}[t]
+\begin{center}
+    \includegraphics[scale=0.5]{med_abs_diff_ecl_coeffs.png}
+    \caption{\rm Статистически значимые коэффициенты разложения модуля разности параллаксов XHIP и TGAS по сферическим функциям}
+\label{med_abs_diff_ecl_coeffs}
+ \end{center}
+\end{figure}
+
+
+\section{Обсуждение}
+
+Анализ показывает, что статистически значимые гармоники разложения модуля разности параллаксов XHIP и TGAS 
+по сферическим функциям в эклиптических координатах имеют номера 0, 2, 4, 6, 7, 16, 21, 41
+Гармоника за номером 0 - это просто константа.  Остальные гармоники как минимум в 4.5 раза менее значимые, 
+чем гармоника за номером 4 (рис.~\ref{K4}). Тем самым, мы можем утверждать, 
+что имеет место зависимость отличия разности параллакса только от экваториальной долготы, 
+остальные зависимости на сфере незначительны.
+
+\begin{figure}[t]
+\begin{center}
+    \includegraphics[scale=0.5]{K4.png}
+    \caption{\rm Сферическая функция $K_4$ ($K_{(2, 0, 1)}$)}
+\label{K4}
+ \end{center}
+\end{figure}
+
+% Чем можно объяснить данную зависимость? Прежде всего - это 
+
+
+\end{document}
