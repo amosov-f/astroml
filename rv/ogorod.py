@@ -292,36 +292,34 @@ def main():
 
         plt.savefig(f'count/count_{int(l_dist)}_{int(r_dist)}.png', dpi=150)
 
-        # X, y = prepare_mu_vr(dataset.iloc[l:r])
-        # smm = sm.OLS(y, X)
-        # st = time.time()
-        # res = smm.fit()
-        # # print(f'Model fitting finished in {time.time() - st} s')
-        # print(f'Distance from {int(l_dist)}, median {int(m_dist)}, to {int(r_dist)}')
-        # # print(res.summary())
-        # for i in range(len(res.params)):
-        #     val = res.params[i]
-        #     err = res.bse[i]
-        #     key = res.params.keys()[i]
-        #     if key not in coefs:
-        #         coefs[key] = []
-        #     if key not in errors:
-        #         errors[key] = []
-        #     coefs[key].append(val)
-        #     errors[key].append(err)
-        #     print(f'{key}={val}±{err}')
+        X, y = prepare_mu_vr(dataset.iloc[l:r])
+        smm = sm.OLS(y, X)
+        st = time.time()
+        res = smm.fit()
+        # print(f'Model fitting finished in {time.time() - st} s')
+        print(f'Distance from {int(l_dist)}, median {int(m_dist)}, to {int(r_dist)}')
+        # print(res.summary())
+        for i in range(len(res.params)):
+            val = res.params[i]
+            err = res.bse[i]
+            key = res.params.keys()[i]
+            if key not in coefs:
+                coefs[key] = []
+            if key not in errors:
+                errors[key] = []
+            coefs[key].append(val)
+            errors[key].append(err)
+            print(f'{key}={val}±{err}')
 
-        # X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.4, random_state=0)
-        # lm = sklearn.linear_model.LinearRegression(fit_intercept=False)
-        # lm.fit(X_train, y_train)
-        # y_predicted = lm.predict(X_test)
-        # pearson = pearsonr(y_test, y_predicted)[0]
-        # pearsons.append(pearson)
-        # print(f'Pearson: {pearson}')
-        # print()
+        X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.4, random_state=0)
+        lm = sklearn.linear_model.LinearRegression(fit_intercept=False)
+        lm.fit(X_train, y_train)
+        y_predicted = lm.predict(X_test)
+        pearson = pearsonr(y_test, y_predicted)[0]
+        pearsons.append(pearson)
+        print(f'Pearson: {pearson}')
+        print()
 
-    if True:
-        return
 
     spline_dists = numpy.linspace(min(dists), max(dists), 300)
 
