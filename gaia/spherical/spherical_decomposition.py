@@ -2,7 +2,7 @@ import math
 import pandas as pd
 import numpy as np
 import healpy as hp
-import spherical
+import common.spherical
 from sklearn import datasets, linear_model
 from matplotlib import pyplot as plt
 import statsmodels.api as sm
