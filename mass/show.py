@@ -22,33 +22,42 @@ def main():
     df = pd.concat([from_center, to_center])
 
     # solar_pm = 230 / (K * 8500)
-    # print(solar_pm)
 
     df = prepare_dataset(df)
 
-    df['v'] = K * np.abs(df.r) * df['mul']
+    # df['mul'] = df['mul'] + (22.6 / (K * (df.r / 1000)))
+
+    df['v'] = K * df['mul'] * np.abs(df.r) / 1000
     # df = df[(df.r > 0) & (df.r < 1000)]#.plot.scatter(x='r', y='mul')
 
-    # x = np.linspace(0, 1000, 10)
-    # y = np.linspace(0, 10, 100)
-    # H, xedges, yedges = np.histogram2d(df['r'], df['mul'], bins=(x, y))
-    dist = [-3000, 8500]
-    speed = [-100000, 50000]
+    fig, axes = plt.subplots(nrows=2, ncols=1)
+
+
+    dist = [-5000, 8000]
+    speed = [-100, 50]
     bx = 500
     by = 100
-    plt.figure(1)
-    plt.hist2d(df.r, df.v, range=[dist, speed], bins=(bx, by))
-    bin_means, bin_edges, binnumber = stats.binned_statistic(df.r, df.v, bins=bx, range=dist, statistic='median')
-    plt.hlines(bin_means, bin_edges[:-1], bin_edges[1:], colors='r', lw=3, label = 'binned statistic of data')
-    plt.colorbar()
 
     mul_range = [-10, 5]
-    bx = 500
-    plt.figure(2)
-    plt.hist2d(df.r, df['mul'], range=[dist, mul_range], bins=(bx, by))
+    axes[0].set_title('Угловая скорость по галактической долготе')
+    h0 = axes[0].hist2d(df.r, df['mul'], range=[dist, mul_range], bins=(bx, by))
     bin_means, bin_edges, binnumber = stats.binned_statistic(df.r, df['mul'], bins=bx, range=dist, statistic='median')
-    plt.hlines(bin_means, bin_edges[:-1], bin_edges[1:], colors='r', lw=3, label='binned statistic of data')
-    plt.colorbar()
+    axes[0].hlines(bin_means, bin_edges[:-1], bin_edges[1:], colors='r', lw=3, label='binned statistic of data')
+    axes[0].set_ylabel('Угловая скорость [mas/год]')
+    plt.colorbar(h0[3], ax=axes[0])
+
+    axes[1].set_title('Абсолютная скорость относительно Солнца')
+    h1 = axes[1].hist2d(df.r, df.v, range=[dist, speed], bins=(bx, by))
+    bin_means, bin_edges, binnumber = stats.binned_statistic(df.r, df.v, bins=bx, range=dist, statistic='median')
+    axes[1].hlines(bin_means, bin_edges[:-1], bin_edges[1:], colors='r', lw=3, label = 'binned statistic of data')
+    axes[1].set_xlabel('Расстояние [пк]')
+    axes[1].set_ylabel('Абсолютная скорость [км/с]')
+    plt.colorbar(h1[3], ax=axes[1])
+
+
+    # fig, axes = plt.subplots(nrows=2, ncols=2)
+    # axes[0, 0].set_title('Расстояние до звезд [пк]')
+    # axes[1].colorbar()
 
     plt.show()
 
