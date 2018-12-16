@@ -39,14 +39,14 @@ def main():
     by = 100
 
     mul_range = [-10, 5]
-    axes[0].set_title('Угловая скорость по галактической долготе')
+    axes[0].set_title('Собственное движение звезд по галактической долготе')
     h0 = axes[0].hist2d(df.r, df['mul'], range=[dist, mul_range], bins=(bx, by))
     bin_means, bin_edges, binnumber = stats.binned_statistic(df.r, df['mul'], bins=bx, range=dist, statistic='median')
     axes[0].hlines(bin_means, bin_edges[:-1], bin_edges[1:], colors='r', lw=3, label='binned statistic of data')
     axes[0].set_ylabel('Угловая скорость [mas/год]')
     plt.colorbar(h0[3], ax=axes[0])
 
-    axes[1].set_title('Абсолютная скорость относительно Солнца')
+    axes[1].set_title('Поперечная скорость звезд по галактической долготе')
     h1 = axes[1].hist2d(df.r, df.v, range=[dist, speed], bins=(bx, by))
     bin_means, bin_edges, binnumber = stats.binned_statistic(df.r, df.v, bins=bx, range=dist, statistic='median')
     axes[1].hlines(bin_means, bin_edges[:-1], bin_edges[1:], colors='r', lw=3, label = 'binned statistic of data')
