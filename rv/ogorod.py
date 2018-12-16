@@ -65,6 +65,22 @@ def kmul_prim_apply(df):
                              y=K * mul))
 
 
+def kmul_cb(df: pd.DataFrame):
+    l, b, mul, mub, px = df.l, df.b, df['mul'], df.mub, df.px
+    return pd.DataFrame(dict(U=+px * sin(l),
+                             V=-px * cos(l),
+                             W=0.0,
+                             Wx=-sin(b) * cos(l),
+                             Wy=-sin(b) * sin(l),
+                             Wz=+cos(b),
+                             M12=+cos(b) * cos(2 * l),
+                             M13=-sin(b) * sin(l),
+                             M23=+sin(b) * cos(l),
+                             C=-cos(b) * sin(2 * l),
+                             K=0.0,
+                             y=K * mul))
+
+
 def kmub_apply(df):
     l, b, mul, mub, px = df.l, df.b, df['mul'], df.mub, df.px
     return pd.DataFrame(dict(U=+px * cos(l) * sin(b),
@@ -98,6 +114,22 @@ def kmub_prim_apply(df):
                              y=K * mub))
 
 
+def kmub_cb(df: pd.DataFrame):
+    l, b, mul, mub, px = df.l, df.b, df['mul'], df.mub, df.px
+    return pd.DataFrame(dict(U=+px * cos(l) * sin(b),
+                             V=+px * sin(l) * sin(b),
+                             W=-px * cos(b),
+                             Wx=sin(l),
+                             Wy=-cos(l),
+                             Wz=0.0,
+                             M12=-0.5 * sin(2 * b) * sin(2 * l),
+                             M13=+cos(2 * b) * cos(l),
+                             M23=+cos(2 * b) * sin(l),
+                             C=-0.5 * sin(2 * b) * cos(2 * l),
+                             K=-0.5 * sin(2 * b),
+                             y=K * mub))
+
+
 def vr_apply(df):
     l, b, mul, mub, px = df.l, df.b, df['mul'], df.mub, df.px
     x = {
@@ -115,30 +147,20 @@ def vr_apply(df):
     return pd.DataFrame(x)
 
 
-def prepare_mu(dataset):
-    kmul = dataset.apply(kmul_prim_apply, axis=1)
-    kmub = dataset.apply(kmub_prim_apply, axis=1)
-    return split(pd.concat([kmul, kmub]))
-
-
-def prepare_vr(dataset):
-    return split(dataset.apply(vr_apply, axis=1))
-
-
 def prepare_mu_vr(dataset: pd.DataFrame):
     start = time.time()
     dataset.iterrows()
 
-    # kmul = kmul_prim_apply(dataset)
+    kmul = kmul_cb(dataset)
     kmul_ts = time.time()
     # print(f'kmul computation finished in {int(kmul_ts - start)} s')
-    # kmub = kmub_prim_apply(dataset)
+    kmub = kmub_cb(dataset)
     kmub_ts = time.time()
     # print(f'kmub computation finished in {int(kmub_ts - kmul_ts)} s')
-    vr = vr_apply(dataset)
+    # vr = vr_apply(dataset)
     vr_ts = time.time()
     # print(f'vr computation finished in {int(vr_ts - kmub_ts)} s')
-    return split(pd.concat([vr]).fillna(0))
+    return split(pd.concat([kmul, kmub]).fillna(0))
 
     # items = []
     # index = []
@@ -267,17 +289,17 @@ def main():
     #     ['M12', 'M13', 'M23'],
     #     ['M11', 'M22', 'M33']
     # ]
-    figure_lines = [
-        ['U', 'V', 'W'],
-        ['M12', 'M13', 'M23'],
-        ['M11', 'M22', 'M33']
-    ]
     # figure_lines = [
     #     ['U', 'V', 'W'],
-    #     ['Wx', 'Wy', 'Wz'],
     #     ['M12', 'M13', 'M23'],
-    #     ['M11z', 'X']
+    #     ['M11', 'M22', 'M33']
     # ]
+    figure_lines = [
+        ['U', 'V', 'W'],
+        ['Wx', 'Wy', 'Wz'],
+        ['M12', 'M13', 'M23'],
+        ['C', 'K']
+    ]
 
     for figure in figure_lines:
         for label in figure:
