@@ -1,21 +1,19 @@
 import time
 
-import numpy
-import sklearn
-
-import pandas as pd
-from scipy.stats import pearsonr
-import statsmodels.api as sm
-from numpy import sin, cos
-import sklearn.linear_model as lm
-from sklearn.model_selection import cross_validate
-from matplotlib import pyplot as plt
-from sklearn.model_selection import train_test_split
-from scipy.interpolate import spline
 import healpy as hp
+import numpy
+import pandas as pd
+import sklearn
+import statsmodels.api as sm
+from matplotlib import pyplot as plt
+from numpy import sin, cos, sqrt, radians
+from scipy.interpolate import spline
+from scipy.stats import pearsonr
+from sklearn.model_selection import train_test_split
+
 from common.astro import galaxy, galaxy_mu
+from common.gaia.with_rv import distance, slices
 from common.pandas2 import split
-from common.gaia.with_rv import to_galaxy, distance, slices
 
 Pi = 3.1415926535897932384626433832795_8
 K = 4.74
@@ -147,27 +145,68 @@ def vr_apply(df):
     return pd.DataFrame(x)
 
 
-def prepare_mu_vr(dataset: pd.DataFrame):
-    start = time.time()
-    dataset.iterrows()
 
+def bottlinger_vr(df: pd.DataFrame, l0, R0):
+    l, b, mul, mub, px = columns(df)
+    r = 1 / px
+    R = compute_R(l, b, r, l0, R0)
+    return pd.DataFrame(dict(UG=cos(b) * cos(l),
+                             VG=+cos(b) * sin(l),
+                             WG=+sin(b),
+                             w01=-R0 * (R - R0) * sin(l - l0) * cos(b),
+                             w011=-0.5 * R0 * (R - R0) ** 2 * sin(l - l0) * cos(b),
+                             k0=cos(b) ** 2 * r,
+                             k01=+(R - R0) * (r * cos(b) - R0 * cos(l - l0)) * cos(b),
+                             k011=+0.5 * (R - R0) ** 2 * (r * cos(b) - R0 * cos(l - l0)) * cos(b),
+                             y=df.radial_velocity))
+
+def bottlinger_mul(df: pd.DataFrame, l0, R0):
+    l, b, mul, mub, px = columns(df)
+    r = 1 / px
+    R = compute_R(l, b, r, l0, R0)
+    return pd.DataFrame(dict(UG=-sin(l),
+                             VG=+cos(l),
+                             w01=-(R - R0) * (R0 * cos(l - l0) - r * cos(b)),
+                             w011=-0.5 * (R - R0) ** 2 * (R0 * cos(l - l0) - r * cos(b)),
+                             w0=+r * cos(b),
+                             k01=+R0 * (R - R0) * sin(l - l0),
+                             k011=+0.5 * R0 * (R - R0) ** 2 * sin(l - l0),
+                             y=K * r * mul))
+
+def bottlinger_mub(df: pd.DataFrame, l0, R0):
+    l, b, mul, mub, px = columns(df)
+    r = 1 / px
+    R = compute_R(l, b, r, l0, R0)
+    return pd.DataFrame(dict(UG=-cos(l) * sin(b),
+                             VG=-sin(l) * sin(b),
+                             WG=+cos(b),
+                             w01=+R0 * (R - R0) * sin(l - l0) * sin(b),
+                             w011=+0.5 * R0 * (R - R0) ** 2 * sin(l - l0) * sin(b),
+                             k0=-cos(b) * sin(b) * r,
+                             k01=-(R - R0) * (r * cos(b) - R0 * cos(l - l0)) * sin(b),
+                             k011=-0.5 * (R - R0) ** 2 * (r * cos(b) - R0 * cos(l - l0)) * sin(b),
+                             y=K * r * mub))
+
+
+def columns(df: pd.DataFrame):
+    return df.l, df.b, df['mul'], df.mub, df.px
+
+
+def compute_R(l, b, r, l0, R0):
+    R2 = (r * cos(l)) ** 2 * R0 * r * cos(b) * cos(l - l0) + R0 ** 2
+    return sqrt(R2)
+
+
+def prepare_mu_vr(dataset: pd.DataFrame):
     kmul = kmul_cb(dataset)
-    kmul_ts = time.time()
-    # print(f'kmul computation finished in {int(kmul_ts - start)} s')
     kmub = kmub_cb(dataset)
-    kmub_ts = time.time()
-    # print(f'kmub computation finished in {int(kmub_ts - kmul_ts)} s')
-    # vr = vr_apply(dataset)
-    vr_ts = time.time()
-    # print(f'vr computation finished in {int(vr_ts - kmub_ts)} s')
     return split(pd.concat([kmul, kmub]).fillna(0))
 
-    # items = []
-    # index = []
-    # for k, v in kwargs.items():
-    #     items.append(v)
-    #     index.append(k)
-    # return pd.Series(items, index=index)
+def prepare_bottlinger(df: pd.DataFrame, l0, R0):
+    vr = bottlinger_vr(df, l0, R0)
+    mul = bottlinger_mul(df, l0, R0)
+    mub = bottlinger_mub(df, l0, R0)
+    return split(pd.concat([vr, mul, mub]).fillna(0))
 
 
 def compute(l, r):
@@ -235,23 +274,11 @@ def main():
         m_dist = distance(df.iloc[len(df) // 2])
         dists.append(m_dist)
 
-        # nside = 32
-        # hist = numpy.zeros(hp.nside2npix(nside))
-        # for _, row in df.iterrows():
-        #     l, b, mul, mub, px = to_galaxy(row)
-        #     pix = compute_pixel(nside, l, b)
-        #     hist[pix] += 1
-        #
-        # plt.clf()
-        #
-        # hp.mollview(hist, title=f"Распределение звезд от {int(l_dist)} до {int(r_dist)} пк", unit='число звезд в пикселе', coord='G', min=0, max=500)
-        # hp.graticule()
+        l0 = radians(120)
+        R0 = 0.1500
 
-        # plt.show()
+        X, y = prepare_bottlinger(df, l0, R0)
 
-        # plt.savefig(f'count/count_{int(l_dist)}_{int(r_dist)}.png', dpi=150)
-
-        X, y = prepare_mu_vr(df)
         smm = sm.OLS(y, X)
         st = time.time()
         res = smm.fit()
@@ -294,11 +321,16 @@ def main():
     #     ['M12', 'M13', 'M23'],
     #     ['M11', 'M22', 'M33']
     # ]
+    # figure_lines = [
+    #     ['U', 'V', 'W'],
+    #     ['Wx', 'Wy', 'Wz'],
+    #     ['M12', 'M13', 'M23'],
+    #     ['C', 'K']
+    # ]
     figure_lines = [
-        ['U', 'V', 'W'],
-        ['Wx', 'Wy', 'Wz'],
-        ['M12', 'M13', 'M23'],
-        ['C', 'K']
+        ['UG', 'VG', 'WG'],
+        ['w0', 'w01', 'w011'],
+        ['k0', 'k01', 'k011']
     ]
 
     for figure in figure_lines:
@@ -307,6 +339,7 @@ def main():
             for val, err in zip(coefs[label], errors[label]):
                 print('{0:.1f}\t{1:.1f}'.format(val, err).replace('.', ','), end='\t')
             print()
+
     print('Pearson', end='\t')
 
     for p in pearsons:
