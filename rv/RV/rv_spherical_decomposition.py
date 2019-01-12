@@ -7,8 +7,8 @@ def main():
     df = read_gaia_with_rv()
     df.y = df.radial_velocity
     model = decompose_spherical(df, 50)
-    show_spherical_decomposition(model)
-    show_spherical_decomposition_on_sphere(model, 'Radial velocity model')
+    # show_spherical_decomposition(model)
+    show_spherical_decomposition_on_sphere(model, 'Модель лучевых скоростей [км/с]')
 
 
 if __name__ == '__main__':

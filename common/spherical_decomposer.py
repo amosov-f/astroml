@@ -30,8 +30,9 @@ def show_spherical_decomposition(model):
     errors = model.bse
 
     for i in range(len(coeffs)):
-        if abs(coeffs[i]) > 3 * errors[i]:
-            print(f'{i}: {coeffs[i]}±{errors[i]}')
+        # if abs(coeffs[i]) > 3 * errors[i]:
+        print('{}\t{:.2f}\t{:.2f}'.format(i, coeffs[i], errors[i]).replace('.', ','))
+    print()
     res = coeffs
 
     plt.bar(range(len(res)), res)

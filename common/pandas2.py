@@ -4,8 +4,8 @@ import pandas
 
 
 def split(dataset):
-    X = dataset.iloc[:, :-1]
-    y = dataset.iloc[:, -1]
+    X = dataset.loc[:, dataset.columns != 'y']
+    y = dataset.y
     return X, y
 
 
