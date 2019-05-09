@@ -252,10 +252,6 @@ SLICE = STEP
 MAX = 6000000
 
 
-def compute_pixel(nside, l, b):
-    return hp.ang2pix(nside, numpy.radians(-b + 90), numpy.radians(l))
-
-
 def main():
     start = time.time()
     dataset = pd.read_csv('full.tsv', sep='\t')
@@ -306,7 +302,7 @@ def main():
         print(f'Pearson: {pearson}')
         print()
 
-    slices(pizza, dataset, MAX, STEP, SLICE)
+    slices(pizza, dataset, MAX, STEP, SLICE, prepare=True)
 
     spline_dists = numpy.linspace(min(dists), max(dists), 300)
 
