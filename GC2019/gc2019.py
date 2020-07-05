@@ -1,13 +1,16 @@
+import time
 from dataclasses import dataclass
 from pathlib import Path
 
 import pandas as pd
 import numpy as np
 
-from common.gaia.with_rv import to_galaxy, prepare_galaxy_dataset
+from common.gaia.with_rv import to_galaxy, prepare_galaxy_dataset, read_gaia_with_rv, read_raw_gaia_with_rv
 import astropy.units as u
 import astropy.coordinates as coord
 from numpy import sin, cos
+
+coord.galactocentric_frame_defaults.set('v4.0')
 
 def read_catalog():
     data = []
@@ -97,14 +100,8 @@ def absolute_velocity(df):
 
 def to_galactocentric_full(df):
     # df = prepare_galaxy_dataset(df)
-    result = {}
-    for index, row in df.iterrows():
-        r2 = to_galctocentric_row(row)
-        for k, v in r2.items():
-            if k not in result:
-                result[k] = []
-            result[k].append(v)
-    return pd.DataFrame(data=result)
+    r2 = to_galctocentric_row(df)
+    return pd.DataFrame(data=r2)
 
 
 @dataclass(frozen=True)
@@ -157,13 +154,13 @@ radial_velocity={self.rv:.2f} km/s
 """
 
 
-def to_galactocentric(star: Spheric):
-    c = coord.SkyCoord(ra=star.ra * u.deg,
-                       dec=star.dec * u.deg,
-                       pm_ra_cosdec=star.pmra * u.mas / u.yr,
-                       pm_dec=star.pmdec * u.mas / u.yr,
-                       radial_velocity=star.rv * u.km / u.s,
-                       distance=coord.Distance(parallax=star.dist * u.kiloparsec, allow_negative=True))
+def to_galactocentric(ra, dec, pmra, pmdec, rv, dist):
+    c = coord.SkyCoord(ra=np.array(ra) * u.deg,
+                       dec=np.array(dec) * u.deg,
+                       pm_ra_cosdec=np.array(pmra) * u.mas / u.yr,
+                       pm_dec=np.array(pmdec) * u.mas / u.yr,
+                       radial_velocity=np.array(rv) * u.km / u.s,
+                       distance=coord.Distance(value=dist, unit=u.kiloparsec, allow_negative=True))
 
     g = c.transform_to(coord.Galactocentric)
 
@@ -180,19 +177,19 @@ def to_galactocentric(star: Spheric):
                           mub=g.proper_motion[1].value,
                           rv=g.radial_velocity.value)
 
-def to_galctocentric_row(row):
-    spheric = Spheric(ra=row['ra'],
-                      dec=row['dec'],
-                      pmra=row['pmra'],
-                      pmdec=row['pmdec'],
-                      rv=row['radial_velocity'],
-                      dist=row['dist'])
-    gal = to_galactocentric(spheric)
+def to_galctocentric_row(df):
+    ra = df['ra']
+    dec = df['dec']
+    pmra = df['pmra']
+    pmdec = df['pmdec']
+    rv = df['radial_velocity']
+    dist = df['dist']
+    gal = to_galactocentric(ra, dec, pmra, pmdec, rv, dist)
     return {
-        'ra': spheric.ra,
-        'dec': spheric.dec,
-        'pmra': spheric.pmra,
-        'pmdec': spheric.pmdec,
+        # 'ra': ra,
+        # 'dec': dec,
+        # 'pmra': pmra,
+        # 'pmdec': pmdec,
         'radial_velocity': gal.rv,
         'galactocentric_x': gal.x,
         'galactocentric_y': gal.y,
@@ -222,6 +219,13 @@ def read_gc2019():
     return to_galactocentric_full(df)
 
 
+def read_gaia_with_rv_in_galactocentric():
+    df = read_raw_gaia_with_rv()
+    df['dist'] = 1.0 / df['parallax']
+    df = df[(df.dist > 0)]
+    return to_galactocentric_full(df)
+
+
 def main():
     #  1- 11  A11   ---       Name    Common name, NGC identifier, etc.
     #   13- 22  A10   ---       OName   Other name
@@ -239,15 +243,18 @@ def main():
     #   98-103  F6.3  ---       corr    Correlation coefficient between uncertainties
     #  108-111  F4.1  arcmin    Rscale  Scale radius of Gaia-detected cluster members
     #  115-119  I5    ---       Nstar   Number of Gaia-detected cluster member stars
-    # df = read_catalog()
+    df = read_gc2019()
     # df = df[(df.dist > 0)]
     # # df = prepare_galaxy_dataset(df)
+    # start = time.time()
+    # to_galctocentric_row(df)
     # for index, row in df.iterrows():
-    #     print(to_galactocentric(row))
-    df = read_gc2019()
-    df.to_csv('gc2019_with_galactocentric.tsv', sep='\t', encoding='utf-8')
+    #     print(to_galctocentric_row(row))
+    # print(6000000 * (time.time() - start) / 100 / 3600)
+    # df = read_gc2019()
+    # df.to_csv('gc2019_with_galactocentric.tsv', sep='\t', encoding='utf-8')
     # for row in df.iterrows():
-    # to_cartesian(df)
+
     # v = absolute_velocity(df)
     # ave_vy = np.average(v.vy)
     # v -= ave_vy
