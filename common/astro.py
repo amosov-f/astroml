@@ -1,5 +1,6 @@
 from numpy import sin, cos, arcsin, arctan2, pi
 import numpy as np
+import pandas as pd
 
 Leo = 4.936829260965283  # 282.85948083°
 L0 = 0.5747703990741704  # 32.931918056°
@@ -28,3 +29,16 @@ def galaxy_mu(mua, mud, l, b, d):
     mul = cfi * mua + sfi * mud
     mub = - sfi * mua + cfi * mud
     return mul, mub
+
+
+def cylinder_centers(nside: int):
+    ls = []
+    bs = []
+    for l in np.linspace(0, 2 * np.pi, nside):
+        for b in np.linspace(-np.pi / 2, np.pi / 2, nside):
+            ls.append(l)
+            bs.append(b)
+    return pd.DataFrame({
+        'l': ls,
+        'b': bs
+    })

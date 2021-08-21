@@ -25,7 +25,7 @@ def prepare_features(df: DataFrame, ncoeff: int):
     return X
 
 
-def show_spherical_decomposition(model):
+def show_spherical_decomposition(model, draw=True):
     coeffs = model.params
     errors = model.bse
 
@@ -35,11 +35,14 @@ def show_spherical_decomposition(model):
     print()
     res = coeffs
 
-    plt.bar(range(len(res)), res)
-    plt.xlabel('j')
-    plt.ylabel('coeff')
-    plt.xticks(range(len(res)), rotation='90')
-    plt.show()
+    if draw:
+        plt.bar(range(len(res)), res)
+        plt.xlabel('j')
+        plt.ylabel('coeff')
+        plt.xticks(range(len(res)), rotation='90')
+        plt.show()
+
+    return coeffs, errors
 
 def show_spherical_decomposition_on_sphere(model, title):
     nside = 8

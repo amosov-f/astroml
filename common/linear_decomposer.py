@@ -9,6 +9,19 @@ def prepare_linear_equations(df, compute_equations):
     return split(equations.fillna(0))
 
 
+def compute_coeffs(df, compute_equations):
+    X, y = prepare_linear_equations(df, compute_equations)
+
+    smm = sm.OLS(y, X)
+
+    res = smm.fit()
+    print(res.summary2())
+
+    y_pred = res.predict(X)
+
+    return smm, res, y_pred - y
+
+
 def decompose(dataset, compute_equations, imax, step, slice, sort_lines):
     dists = []
     coefs = {}
@@ -18,10 +31,7 @@ def decompose(dataset, compute_equations, imax, step, slice, sort_lines):
         m_dist = distance(df.iloc[len(df) // 2])
         dists.append(m_dist)
 
-        X, y = prepare_linear_equations(df, compute_equations)
-
-        smm = sm.OLS(y, X)
-        res = smm.fit()
+        _, res, _ = compute_coeffs(df, compute_equations)
 
         for i in range(len(res.params)):
             val = res.params[i]
@@ -43,3 +53,5 @@ def decompose(dataset, compute_equations, imax, step, slice, sort_lines):
             for val, err in zip(coefs[label], errors[label]):
                 print('{0:.1f}\t{1:.1f}'.format(val, err).replace('.', ','), end='\t')
             print()
+
+    return coefs

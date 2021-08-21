@@ -58,8 +58,13 @@ def read_raw_gaia_with_rv():
     return pd.read_csv(file_dir.joinpath('full_with_errors.tsv'), sep='\t')
 
 
-def read_gaia_with_rv():
+def read_gaia_with_rv_1500():
     df = read_raw_gaia_with_rv()
     df = df[df.parallax > 0.66]
     # df = df[df.parallax_error / df.parallax < 0.5]
+    return prepare_galaxy_dataset(df)
+
+
+def read_gaia_with_rv_full():
+    df = read_raw_gaia_with_rv()
     return prepare_galaxy_dataset(df)
