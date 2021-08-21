@@ -12,22 +12,6 @@ from rv.count.distribution import draw_distribution
 from scripts.ogorod_fg import ogorod_fg_vr, K, compute_mu
 
 
-def match(c1, c2):
-    start = time.time()
-    print('Matching started')
-    idx, d2d, d3d = c1.match_to_catalog_sky(c2)
-    print(f'Matching finished in {time.time() - start}s')
-
-    # for i, index in idx.enumerate():
-    #     catalog['']
-    # numpy.save('idx', idx)
-    return idx
-
-
-def match2(c1, c2):
-    return numpy.load('idx.npy')
-
-
 def abs_vel2(v):
     return numpy.array(v.d_x) ** 2 + numpy.array(v.d_y) ** 2 + numpy.array(v.d_z) ** 2
 
