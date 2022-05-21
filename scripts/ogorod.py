@@ -7,7 +7,7 @@ import sklearn
 import statsmodels.api as sm
 from matplotlib import pyplot as plt
 from numpy import sin, cos, sqrt, radians
-from scipy.interpolate import spline
+# from scipy.interpolate import spline
 from scipy.stats import pearsonr
 from sklearn.model_selection import train_test_split
 
@@ -212,7 +212,7 @@ def prepare_bottlinger(df: pd.DataFrame, l0, R0):
 def compute(l, r):
     filter = f'{l} <= 1000 / parallax < {r}'
     print(filter)
-    df = pd.read_csv('full.tsv', sep='\t') \
+    df = pd.read_csv('../common/gaia/full.tsv', sep='\t') \
         .query(filter)
     print(df)
     df = df.sample(min(50000, len(df)), random_state=0)
@@ -231,11 +231,11 @@ def compute(l, r):
     print(y)
 
     X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.5, random_state=0)
-    lm = sklearn.linear_model.LinearRegression(fit_intercept=False)
-    lm.fit(X_train, y_train)
-    # print(lm.score(X_test, y_test))
-    y_predicted = lm.predict(X_test)
-    print(f'Person for {filter}: {pearsonr(y_test, y_predicted)[0]}')
+    # lm = sklearn.linear_model.LinearRegression(fit_intercept=False)
+    # lm.fit(X_train, y_train)
+    # # print(lm.score(X_test, y_test))
+    # y_predicted = lm.predict(X_test)
+    # print(f'Person for {filter}: {pearsonr(y_test, y_predicted)[0]}')
 
     smm = sm.OLS(y_train, X_train)
     res = smm.fit()
@@ -254,7 +254,7 @@ MAX = 6000000
 
 def main():
     start = time.time()
-    dataset = pd.read_csv('full.tsv', sep='\t')
+    dataset = pd.read_csv('../common/gaia/full.tsv', sep='\t')
     read_ts = time.time()
     print(f'Read finished in {int(read_ts - start)} s')
     dataset = dataset.sort_values(by='parallax', ascending=False)
@@ -293,14 +293,14 @@ def main():
             errors[key].append(err)
             print(f'{key}={val}±{err}')
 
-        X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.4, random_state=0)
-        lm = sklearn.linear_model.LinearRegression(fit_intercept=False)
-        lm.fit(X_train, y_train)
-        y_predicted = lm.predict(X_test)
-        pearson = pearsonr(y_test, y_predicted)[0]
-        pearsons.append(pearson)
-        print(f'Pearson: {pearson}')
-        print()
+        # X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.4, random_state=0)
+        # lm = sklearn.linear_model.LinearRegression(fit_intercept=False)
+        # lm.fit(X_train, y_train)
+        # y_predicted = lm.predict(X_test)
+        # pearson = pearsonr(y_test, y_predicted)[0]
+        # pearsons.append(pearson)
+        # print(f'Pearson: {pearson}')
+        # print()
 
     slices(pizza, dataset, MAX, STEP, SLICE, prepare=True)
 

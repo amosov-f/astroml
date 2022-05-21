@@ -1,0 +1,12 @@
+astropy
+numpy
+pandas
+healpy
+statsmodels
+sklearn
+astroquery
+healpy
+statsmodels
+sklearn
+astroquery
+wheel

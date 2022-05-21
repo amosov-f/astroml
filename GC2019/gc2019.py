@@ -5,7 +5,7 @@ from pathlib import Path
 import pandas as pd
 import numpy as np
 
-from common.gaia.with_rv import to_galaxy, prepare_galaxy_dataset, read_gaia_with_rv, read_raw_gaia_with_rv
+from common.gaia.with_rv import to_galaxy, prepare_galaxy_dataset, read_gaia_with_rv_1500, read_raw_gaia_with_rv
 import astropy.units as u
 import astropy.coordinates as coord
 from numpy import sin, cos

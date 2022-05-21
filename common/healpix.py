@@ -15,3 +15,6 @@ def pixel_centers(nside: int):
         'l': ls,
         'b': bs
     })
+
+# def show_distribution(df, nside):
+#

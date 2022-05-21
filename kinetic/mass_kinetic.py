@@ -9,7 +9,7 @@ from astropy import units as u
 from matplotlib.pyplot import hist
 import matplotlib.pyplot as plt
 
-from common.gaia.with_rv import read_gaia_with_rv, read_raw_gaia_with_rv, slices
+from common.gaia.with_rv import read_gaia_with_rv_1500, read_raw_gaia_with_rv, slices
 from common.linear_decomposer import decompose
 from scripts.ogorod_fg import compute_ogorod_fg
 
@@ -39,7 +39,7 @@ def main():
     asu = pandas.read_csv('asu.tsv', sep='\t')
     print(asu)
 
-    gaia_with_rv = read_gaia_with_rv()
+    gaia_with_rv = read_gaia_with_rv_1500()
     print(gaia_with_rv)
 
     # gaia_with_rv['px'] = gaia_with_rv['parallax']

@@ -1,17 +1,16 @@
-from GC2019.gc2019 import read_gc2019
-from common.spherical_decomposer import decompose_spherical, show_spherical_decomposition, show_spherical_decomposition_on_sphere
-import pandas as pd
-from common.gaia.with_rv import read_gaia_with_rv_1500, slices
-import numpy as np
+from common.gaia.with_rv import slices
+from common.spherical_decomposer import show_spherical_decomposition_on_sphere, decompose_spherical, \
+    show_spherical_decomposition
+from curve.sistematic3d import read_gaia_with_rv_redisuals_xyz, read_gaia_with_rv_residuals
 
 
-MAX = 6_000_000
-STEP = 150
-SLICE = STEP
+def velocity_model(x, y, z):
+    return - x * y, y ** 2, x ** 2 + y ** 2
 
 
 def main():
-    df = read_gc2019()#read_gaia_with_rv()
+    df = read_gaia_with_rv_residuals()#read_gaia_with_rv()
+    df_xyz = read_gaia_with_rv_redisuals_xyz()
 
     # print(f"Average mu error: {np.average(np.sqrt(df['mul_error'] ** 2 + df['mub_error'] ** 2))}")
     # # print(f"Average mub_error: {np.average()}")
@@ -19,11 +18,14 @@ def main():
     #
     #
     # return
-    df['y'] = df['radial_velocity'] / (1000 / df['px']) # км/с/кпк
+    # df[]
+
+
+    df['y'] = df.vr / (1 / df.px) # км/с/кпк
 
     ncoeff = 16
     xls = [f"{i}\t" for i in range(ncoeff)]
-    def pizza(ring):
+    def pizza(ring, _, _1):
         model = decompose_spherical(ring, ncoeff)
         coeffs, errors = show_spherical_decomposition(model, draw=False)
         for i in range(len(coeffs)):
@@ -31,7 +33,7 @@ def main():
 
         # show_spherical_decomposition_on_sphere(model, 'Модель лучевых скоростей [км/с]')
 
-    slices(pizza, df, MAX, STEP, SLICE, prepare=False)
+    slices(pizza, df)
 
     # for row in xls:
     #     print(row)
