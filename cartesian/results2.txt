@@ -1,0 +1,258 @@
+
+vx = 	+ -9.65	 + -0.79 * x + 26.04 * y	+ -0.67 * x^2	+ 2.30 * x y	+ -0.03 * y^2
+vy = 	+ -20.56	                        + -1.79 * x^2	+ -1.83 * y^2	+ -12.54 * z^2
+vz = 	+ -6.94   	                        + -0.09 * x^2	+ -0.09 * y^2
+
+в vx входят dM11dr2 dw3dr1 dM11dr1
+в vy входит dM22dr2 dM12dr1
+
+в vx = - dw3dr1 + dM11dr2     + dM12dr1
+в vy = - dw3dr1 - dM22dr2     + dw1dr3 - dM23dr3
+
+U
+vx = 	+ -1.00 * 1
+vy =
+vz =
+
+
+V
+vx =
+vy = 	+ -1.00 * 1
+vz =
+
+
+W
+vx =
+vy =
+vz = 	+ -1.00 * 1
+
+
+w1
+vx =
+vy = 	+ -1.00 * z
+vz = 	+ 1.00 * y
+
+
+w2
+vx = 	+ 1.00 * z
+vy =
+vz = 	+ -1.00 * x
+
+
+w3
+vx = 	+ -1.00 * y
+vy = 	+ 1.00 * x
+vz =
+
+
+M12
+vx = 	+ 1.00 * y
+vy = 	+ 1.00 * x
+vz =
+
+
+M13
+vx = 	+ 1.00 * z
+vy =
+vz = 	+ 1.00 * x
+
+
+M23
+vx =
+vy = 	+ 1.00 * z
+vz = 	+ 1.00 * y
+
+
+M11
+vx = 	+ 1.00 * x
+vy =
+vz =
+
+
+M22
+vx =
+vy = 	+ 1.00 * y
+vz =
+
+
+M33
+vx =
+vy =
+vz = 	+ 1.00 * z
+
+
+dw1dr1
+vx =
+vy = 	+ -1.00 * x z
+vz = 	+ 1.00 * x y
+
+
+dw1dr2
+vx =
+vy = 	+ -1.00 * y z
+vz = 	+ 1.00 * y^2
+
+
+dw1dr3
+vx =
+vy = 	+ -1.00 * z^2
+vz = 	+ 1.00 * y z
+
+
+dw2dr1
+vx = 	+ 1.00 * x z
+vy =
+vz = 	+ -1.00 * x^2
+
+
+dw2dr2
+vx = 	+ 1.00 * y z
+vy =
+vz = 	+ -1.00 * x y
+
+
+dw2dr3
+vx = 	+ 1.00 * z^2
+vy =
+vz = 	+ -1.00 * x z
+
+
+dw3dr1
+vx = 	+ -1.00 * x y
+vy = 	+ 1.00 * x^2
+vz =
+
+
+dw3dr2
+vx = 	+ -1.00 * y^2
+vy = 	+ 1.00 * x y
+vz =
+
+
+dw3dr3
+vx = 	+ -1.00 * y z
+vy = 	+ 1.00 * x z
+vz =
+
+
+dM11dr1
+vx = 	+ 1.00 * x^2
+vy =
+vz =
+
+
+dM11dr2
+vx = 	+ 1.00 * x y
+vy =
+vz =
+
+
+dM11dr3
+vx = 	+ 1.00 * x z
+vy =
+vz =
+
+
+dM12dr1
+vx = 	+ 0.07 * 1	+ 0.12 * x^2	+ 0.80 * x y	+ -0.12 * y^2	+ 0.07 * z^2
+vy = 	+ 0.30 * 1	+ 0.93 * x^2	+ -0.07 * y^2	+ -0.12 * z^2
+vz = 	+ -0.20 * x z	+ 0.40 * y z
+??
+vx = 	+ 1.00 * x y
+vy =    + 1.00 * y^2
+vz =
+
+
+dM12dr2
+vx = 	+ 0.30 * 1	+ -0.07 * x^2	+ 0.93 * y^2	+ -0.12 * z^2
+vy = 	+ -0.07 * 1	+ 0.12 * x^2	+ 0.80 * x y	+ -0.12 * y^2	+ -0.07 * z^2
+vz = 	+ 0.40 * x z	+ 0.20 * y z
+??
+vx = 	+ 1.00 * y^2
+vy =    + 1.00 * x y
+vz =
+
+
+dM12dr3
+vx = 	+ 0.16 * x z	+ 0.76 * y z
+vy = 	+ 0.76 * x z	+ -0.16 * y z
+vz = 	+ -0.25 * x^2	+ 0.40 * x y	+ 0.25 * y^2
+??
+vx = 	+ 1.00 * y z
+vy =    + 1.00 * x z
+vz =
+
+
+dM13dr1
+vx = 	+ 1.00 * x z
+vy =
+vz = 	+ 1.00 * x^2
+
+
+dM13dr2
+vx = 	+ 1.00 * y z
+vy =
+vz = 	+ 1.00 * x y
+
+
+dM13dr3
+vx = 	+ 1.00 * z^2
+vy =
+vz = 	+ 1.00 * x z
+
+
+dM22dr1
+vx =
+vy = 	+ 1.00 * x y
+vz =
+
+
+dM22dr2
+vx =
+vy = 	+ 1.00 * y^2
+vz =
+
+
+dM22dr3
+vx =
+vy = 	+ 1.00 * y z
+vz =
+
+
+dM23dr1
+vx =
+vy = 	+ 1.00 * x z
+vz = 	+ 1.00 * x y
+
+
+dM23dr2
+vx =
+vy = 	+ 1.00 * y z
+vz = 	+ 1.00 * y^2
+
+
+dM23dr3
+vx =
+vy = 	+ 1.00 * z^2
+vz = 	+ 1.00 * y z
+
+
+dM33dr1
+vx =
+vy =
+vz = 	+ 1.00 * x z
+
+
+dM33dr2
+vx =
+vy =
+vz = 	+ 1.00 * y z
+
+
+dM33dr3
+vx =
+vy =
+vz = 	+ 1.00 * z^2
+
+собрать результат в один word
+прислать рисунки

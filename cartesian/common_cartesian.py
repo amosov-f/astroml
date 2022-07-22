@@ -6,6 +6,8 @@ from common.gaia.with_rv import read_raw_gaia_with_rv_no_errors
 from numpy import sin, cos
 import numpy as np
 
+from rv.degree_table import *
+
 
 def read_pizza():
     df = read_raw_gaia_with_rv_no_errors()
@@ -21,12 +23,19 @@ def read_pizza():
     g = c.transform_to(Galactic)
     return g
 
+
 def convert(g, mul, mub, vr):
-    l = np.array(g.l)
-    b = np.array(g.b)
+    l = np.deg2rad(np.array(g.l))
+    b = np.deg2rad(np.array(g.b))
     r = np.array(g.distance) / 1000
-    print(r)
-    return SkyCoord(frame="galactic", l=l * u.deg, b=b * u.deg, pm_l_cosb=mul(l, b, r) * u.mas / u.yr, pm_b=mub(l, b, r) * u.mas / u.yr, radial_velocity=vr(l, b, r) * u.km / u.s, distance=Distance(value=r, unit=u.kpc))
+    # print('pizza')
+    # print(mul(0, 0, 1))
+    # print(mub(0, 0, 1))
+    # print(vr(0, 0, 1))
+    # print(vr(0, 0, 1))
+    return SkyCoord(frame="galactic", l=l * u.rad, b=b * u.rad, pm_l_cosb=mul(l, b, r) * u.mas / u.yr,
+                    pm_b=mub(l, b, r) * u.mas / u.yr, radial_velocity=vr(l, b, r) * u.km / u.s, distance=g.distance)
+
 
 def to_cartesian(g):
     return pd.DataFrame(dict(x=g.cartesian.x.value / 1000,
@@ -42,64 +51,252 @@ def read_gaia_with_rv_cartesian():
 
 # VectorPlot[{-0.67 * x^2 + 2.30 * x * y, -1.79 * x^2 + -1.83 * y^2 }, {x, -3, 3}, {y, -3, 3}]
 
-def U(g):
-    return to_cartesian(convert(g, mul=lambda l, b, r: sin(l) / r / 4.74,
-                                       mub=lambda l, b, r: cos(l) * sin(b) / r / 4.74,
-                                       vr= lambda l, b, r: -cos(b) * cos(l)))
+K = 4.74
 
-def V(g):
-    r = g.distance
-    return to_cartesian(convert(g, mul=lambda l, b, r: -cos(l) / r / 4.74,
-                                       mub=lambda l, b, r: sin(l) * sin(b) / r / 4.74,
-                                       vr= lambda l, b, r: -cos(b) * sin(l)))
 
-def W(g):
-    r = g.distance
-    return to_cartesian(convert(g, mul=lambda l, b, r: -sin(b) * cos(l)  / 4.74,
-                                       mub=lambda l, b, r: -cos(b) / r  / 4.74,
-                                       vr= lambda l, b, r: -sin(b)))
+def apply(P, f):
+    c = SkyCoord(x=P.x, y=P.y, z=P.z, unit='kpc', representation_type='cartesian')
+    c.representation_type = 'spherical'
+    l = np.deg2rad(np.array(c.ra))
+    b = np.deg2rad(np.array(c.dec))
+    r = np.array(c.distance)
+    res = f(l, b, r)
+    sc = SkyCoord(frame="galactic",
+                  l=l * u.rad,
+                  b=b * u.rad,
+                  pm_l_cosb=res["kmul"] / K * u.mas / u.yr,
+                  pm_b=res["kmub"] / K * u.mas / u.yr,
+                  radial_velocity=res["vr_r"] * r * u.km / u.s,
+                  distance=c.galactic.distance)
+    return to_cartesian(sc)
 
-def w1(g):
-    return to_cartesian(convert(g, mul=lambda l, b, r: 0  / 4.74,
-                                       mub=lambda l, b, r: sin(l)  / 4.74,
-                                       vr= lambda l, b, r: 0))
+def U(l, b, r):
+    return dict(kmul=sin(l) / r,
+                kmub=cos(l) * sin(b) / r,
+                vr_r=-cos(b) * cos(l) / r)
 
-def w2(g):
-    return to_cartesian(convert(g, mul=lambda l, b, r: -sin(b) * sin(l)  / 4.74,
-                                       mub=lambda l, b, r: -cos(l)  / 4.74,
-                                       vr= lambda l, b, r: 0))
 
-def w3(g):
-    return to_cartesian(convert(g, mul=lambda l, b, r: +cos(b)  / 4.74,
-                                       mub=lambda l, b, r: 0  / 4.74,
-                                       vr= lambda l, b, r: 0))
+def V(l, b, r):
+    return dict(kmul=-cos(l) / r,
+                kmub=sin(l) * sin(b) / r,
+                vr_r=-cos(b) * sin(l) / r)
 
-def M12(g):
-    return to_cartesian(convert(g, mul=lambda l, b, r: +cos(b) * cos(2 * l)  / 4.74,
-                                       mub=lambda l, b, r: -0.5 * sin(2 * b) * sin(2 * l)  / 4.74,
-                                       vr= lambda l, b, r: cos(b) ** 2 * sin(2 * l) * r))
 
-def M13(g):
-    return to_cartesian(convert(g, mul=lambda l, b, r: -sin(b) * sin(l)  / 4.74,
-                                       mub=lambda l, b, r: +cos(2 * b) * cos(l)  / 4.74,
-                                       vr= lambda l, b, r: sin(2 * b) * cos(l) * r))
+def W(l, b, r):
+    return dict(kmul=0,
+                kmub=-cos(b) / r,
+                vr_r=-sin(b) / r)
 
-def M23(g):
-    return to_cartesian(convert(g, mul=lambda l, b, r: +sin(b) * cos(l)  / 4.74,
-                                       mub=lambda l, b, r: +cos(2 * b) * sin(l)  / 4.74,
-                                       vr= lambda l, b, r: sin(2 * b) * sin(l) * r))
 
-def M11(g):
-    return to_cartesian(convert(g, mul=lambda l, b, r: -0.5 * cos(b) * sin(2 * l)  / 4.74,
-                                       mub=lambda l, b, r: -0.5 * sin(2 * b) * cos(l) ** 2  / 4.74,
-                                       vr= lambda l, b, r: cos(b) ** 2 * cos(l) ** 2 * r))
+def w1(l, b, r):
+    return dict(kmul=-sin(b) * cos(l),
+                kmub=sin(l),
+                vr_r=0)
 
-def M22(g):
-    return to_cartesian(convert(g, mul=lambda l, b, r: +0.5 * cos(b) * sin(2 * l)  / 4.74,
-                                       mub=lambda l, b, r: -0.5 * sin(2 * b) * sin(l) ** 2  / 4.74,
-                                       vr= lambda l, b, r: cos(b) ** 2 * sin(l) ** 2 * r))
 
-def M33(g):
-    return to_cartesian(convert(g, mul=lambda l, b, r: 0  / 4.74,
-                                       mub=lambda l, b, r: +0.5 * sin(2 * b)  / 4.74,
-                                       vr= lambda l, b, r: sin(b) ** 2 * r))
+def w2(l, b, r):
+    return dict(kmul=-sin(b) * sin(l),
+                kmub=-cos(l),
+                vr_r=0)
+
+
+def w3(l, b, r):
+    return dict(kmul=+cos(b),
+                kmub=0,
+                vr_r=0)
+
+
+def M12(l, b, r):
+    return dict(kmul=+cos(b) * cos(2 * l),
+                kmub=-0.5 * sin(2 * b) * sin(2 * l),
+                vr_r=cos(b) ** 2 * sin(2 * l))
+
+
+def M13(l, b, r):
+    return dict(kmul=-sin(b) * sin(l),
+                kmub=+cos(2 * b) * cos(l),
+                vr_r=sin(2 * b) * cos(l))
+
+
+def M23(l, b, r):
+    return dict(kmul=+sin(b) * cos(l),
+                kmub=+cos(2 * b) * sin(l),
+                vr_r=sin(2 * b) * sin(l))
+
+
+def M11(l, b, r):
+    return dict(kmul=-0.5 * cos(b) * sin(2 * l),
+                kmub=-0.5 * sin(2 * b) * cos(l) ** 2,
+                vr_r=cos(b) ** 2 * cos(l) ** 2)
+
+
+def M22(l, b, r):
+    return dict(kmul=+0.5 * cos(b) * sin(2 * l),
+                kmub=-0.5 * sin(2 * b) * sin(l) ** 2,
+                vr_r=cos(b) ** 2 * sin(l) ** 2)
+
+
+def M33(l, b, r):
+    return dict(kmul=0,
+                kmub=+0.5 * sin(2 * b),
+                vr_r=sin(b) ** 2)
+
+
+def dw1dr1(l, b, r):
+    return dict(kmul=r * -mul_dw1dr1.apply(b, l),
+                kmub=r * mub_dw1dr1.apply(b, l),
+                vr_r=0)
+
+def dw1dr2(l, b, r):
+    return dict(kmul=r * -mul_dw1dr2.apply(b, l),
+                kmub=r * mub_dw1dr2.apply(b, l),
+                vr_r=0)
+
+
+def dw1dr3(l, b, r):
+    return dict(kmul=r * -mul_dw1dr3.apply(b, l),
+                kmub=r * mub_dw1dr3.apply(b, l),
+                vr_r=0)
+
+
+def dw2dr1(l, b, r):
+    return dict(kmul=r * -mul_dw2dr1.apply(b, l),
+                kmub=r * -mub_dw2dr1.apply(b, l),
+                vr_r=0)
+
+
+def dw2dr2(l, b, r):
+    return dict(kmul=r * -mul_dw2dr2.apply(b, l),
+                kmub=r * -mub_dw2dr2.apply(b, l),
+                vr_r=0)
+
+
+def dw2dr3(l, b, r):
+    return dict(kmul=r * -mul_dw2dr3.apply(b, l),
+                kmub=r * -mub_dw2dr3.apply(b, l),
+                vr_r=0)
+
+
+def dw3dr1(l, b, r):
+    return dict(kmul=r * mul_dw3dr1.apply(b, l),
+                kmub=0,
+                vr_r=0)
+
+
+def dw3dr2(l, b, r):
+    return dict(kmul=r * mul_dw3dr2.apply(b, l),
+                kmub=0,
+                vr_r=0)
+
+
+def dw3dr3(l, b, r):
+    return dict(kmul=r * mul_dw3dr3.apply(b, l),
+                kmub=0,
+                vr_r=0)
+
+
+def dM11dr1(l, b, r):
+    return dict(kmul=r * mul_dM11dr1.apply(b, l),
+                kmub=r * mub_dM11dr1.apply(b, l),
+                vr_r=r * vr_dM11dr1.apply(b, l))
+
+
+def dM11dr2(l, b, r):
+    return dict(kmul=r * mul_dM11dr2.apply(b, l),
+                kmub=r * mub_dM11dr2.apply(b, l),
+                vr_r=r * vr_dM11dr2.apply(b, l))
+
+
+def dM11dr3(l, b, r):
+    return dict(kmul=r * mul_dM11dr3.apply(b, l),
+                kmub=r * mub_dM11dr3.apply(b, l),
+                vr_r=r * vr_dM11dr3.apply(b, l))
+
+
+def dM12dr1(l, b, r):
+    return dict(kmul=r * mul_dM12dr1.apply(b, l),
+                kmub=r * mub_dM12dr1.apply(b, l),
+                vr_r=r * 2 * vr_dM12dr1.apply(b, l))
+
+
+def dM12dr2(l, b, r):
+    return dict(kmul=r * mul_dM12dr2.apply(b, l),
+                kmub=r * mub_dM12dr2.apply(b, l),
+                vr_r=r * 2 * vr_dM12dr2.apply(b, l))
+
+
+def dM12dr3(l, b, r):
+    return dict(kmul=r * mul_dM12dr3.apply(b, l),
+                kmub=r * mub_dM12dr3.apply(b, l),
+                vr_r=r * 2 * vr_dM12dr3.apply(b, l))
+
+
+def dM13dr1(l, b, r):
+    return dict(kmul=r * mul_dM13dr1.apply(b, l),
+                kmub=r * mub_dM13dr1.apply(b, l),
+                vr_r=r * 2 * vr_dM13dr1.apply(b, l))
+
+
+def dM13dr2(l, b, r):
+    return dict(kmul=r * mul_dM13dr2.apply(b, l),
+                kmub=r * mub_dM13dr2.apply(b, l),
+                vr_r=r * 2 * vr_dM13dr2.apply(b, l))
+
+
+def dM13dr3(l, b, r):
+    return dict(kmul=r * mul_dM13dr3.apply(b, l),
+                kmub=r * mub_dM13dr3.apply(b, l),
+                vr_r=r * 2 * vr_dM13dr3.apply(b, l))
+
+
+def dM22dr1(l, b, r):
+    return dict(kmul=r * mul_dM22dr1.apply(b, l),
+                kmub=r * mub_dM22dr1.apply(b, l),
+                vr_r=r * vr_dM22dr1.apply(b, l))
+
+
+def dM22dr2(l, b, r):
+    return dict(kmul=r * mul_dM22dr2.apply(b, l),
+                kmub=r * mub_dM22dr2.apply(b, l),
+                vr_r=r * vr_dM22dr2.apply(b, l))
+
+
+def dM22dr3(l, b, r):
+    return dict(kmul=r * mul_dM22dr3.apply(b, l),
+                kmub=r * mub_dM22dr3.apply(b, l),
+                vr_r=r * vr_dM22dr3.apply(b, l))
+
+
+def dM23dr1(l, b, r):
+    return dict(kmul=r * mul_dM23dr1.apply(b, l),
+                kmub=r * mub_dM23dr1.apply(b, l),
+                vr_r=r * 2 * vr_dM23dr1.apply(b, l))
+
+
+def dM23dr2(l, b, r):
+    return dict(kmul=r * mul_dM23dr2.apply(b, l),
+                kmub=r * mub_dM23dr2.apply(b, l),
+                vr_r=r * 2 * vr_dM23dr2.apply(b, l))
+
+
+def dM23dr3(l, b, r):
+    return dict(kmul=r * mul_dM23dr3.apply(b, l),
+                kmub=r * mub_dM23dr3.apply(b, l),
+                vr_r=r * 2 * vr_dM23dr3.apply(b, l))
+
+
+def dM33dr1(l, b, r):
+    return dict(kmul=0,
+                kmub=r * mub_dM33dr1.apply(b, l),
+                vr_r=r * vr_dM33dr1.apply(b, l))
+
+def dM33dr2(l, b, r):
+    return dict(kmul=0,
+                kmub=r * mub_dM33dr2.apply(b, l),
+                vr_r=r * vr_dM33dr2.apply(b, l))
+
+
+def dM33dr3(l, b, r):
+    return dict(kmul=0,
+                kmub=r * mub_dM33dr3.apply(b, l),
+                vr_r=r * vr_dM33dr3.apply(b, l))

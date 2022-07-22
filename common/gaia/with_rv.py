@@ -19,6 +19,18 @@ def to_galaxy(df, with_pm_errors=True):
     return l, b, mul, mub, px
 
 
+def prepare_no_error_galaxy_dataset(raw_dataset):
+    l, b, mul, mub, px = to_galaxy(raw_dataset, with_pm_errors=False)
+    return pd.DataFrame(data={
+        'l': l,
+        'b': b,
+        'mul': mul,
+        'mub': mub,
+        'px': px,
+        'radial_velocity': raw_dataset.radial_velocity
+    })
+
+
 def prepare_galaxy_dataset(raw_dataset, with_pm_errors=True):
     if with_pm_errors:
         l, b, mul, mub, px, mul_error, mub_error = to_galaxy(raw_dataset, True)
@@ -29,10 +41,7 @@ def prepare_galaxy_dataset(raw_dataset, with_pm_errors=True):
             'parallax': raw_dataset.parallax
         })
     else:
-        l, b, mul, mub, px = to_galaxy(raw_dataset, with_pm_errors=False)
-        return pd.DataFrame(data={
-            'l': l, 'b': b, 'mul': mul, 'mub': mub, 'px': px, 'radial_velocity': raw_dataset.radial_velocity
-        })
+        return prepare_no_error_galaxy_dataset(raw_dataset)
 
 def distance(row):
     return 1000 / row['px']
@@ -61,7 +70,7 @@ def slices(func, dataset, imax=6000000, step=400000, slice=400000, prepare=False
 
 def read_raw_gaia_with_rv_no_errors():
     file_dir = Path(__file__).parent
-    return pd.read_csv(file_dir.joinpath('full.tsv'), sep='\t')
+    return pd.read_csv(file_dir.joinpath('gdr3_short.csv'))
 
 
 def read_raw_gaia_with_rv():

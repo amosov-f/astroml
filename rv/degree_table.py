@@ -42,11 +42,11 @@ class Deg:
     def __str__(self):
         # s = f"{self.row_type}"
         s = [str(self.coeff)] if self.coeff != 1 else []
-        if self.sinb > 0:
-            # s += f" 0"
-            return "0"
-        # if self.sinb or full_print:
-        #     s += f" * sin^{self.sinb} b"
+        # if self.sinb > 0:
+        #     # s += f" 0"
+        #     return "0"
+        if self.sinb or full_print:
+            s += f" * sin^{self.sinb} b"
         # if self.cosb or full_print:
         #     s += f" * cos^{self.cosb} b"
         if self.sinl or full_print:
@@ -95,11 +95,11 @@ class Deg:
     def apply(self, b, l):
         res = self.coeff * sin(l) ** self.sinl * cos(l) ** self.cosl * cos(2 * l) ** self.cos2l
 
-        # hui = sin(b) ** self.sinb * cos(b) ** self.cosb * cos(2 * b) ** self.cos2b
-        # res *= hui
+        hui = sin(b) ** self.sinb * cos(b) ** self.cosb * cos(2 * b) ** self.cos2b
+        res *= hui
 
-        if self.sinb > 0:
-            return 0
+        # if self.sinb > 0:
+        #     return 0
 
         return res
 
