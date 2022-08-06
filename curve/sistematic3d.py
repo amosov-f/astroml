@@ -49,12 +49,12 @@ def main():
     # return
     df = read_gaia_with_rv_redisuals_xyz()
 
-    min_x = -2000
-    max_x = 2000
-    bin_size = 200
+    min_x = -7000
+    max_x = 7000
+    bin_size = 700
     bins_x = np.linspace(min_x, max_x, ((max_x - min_x) // bin_size) + 1)
-    min_y = -2000
-    max_y = 2000
+    min_y = -7000
+    max_y = 7000
     bins_y = np.linspace(min_y, max_y, ((max_y - min_y) // bin_size) + 1)
 
     x_col = df.x

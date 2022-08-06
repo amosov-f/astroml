@@ -18,8 +18,6 @@ def main():
 
     print(X.columns)
 
-    precision = 0.01
-
     for vname, y in [('vx', df.vx), ('vy', df.vy), ('vz', df.vz)]:
         model = linear_model.Lasso(alpha=1, fit_intercept=False)
     # model = make_pipeline(PolynomialFeatures(degree=1), LinearRegression(fit_intercept=False))
@@ -36,6 +34,14 @@ def main():
 
     print()
 
+    compute_decomposition()
+
+
+
+def compute_decomposition():
+
+    precision = 0.01
+
     r2 = 2.95
     dr = 0.100
 
@@ -48,22 +54,22 @@ def main():
     PX = pd.DataFrame(p.transform(P), columns=p.get_feature_names(P.columns))
 
     for name, f in [('U', U),
-                     ('V', V),
-                     ('W', W),
+                    ('V', V),
+                    ('W', W),
 
-                     ('w1', w1),
-                     ('w2', w2),
-                     ('w3', w3),
+                    ('w1', w1),
+                    ('w2', w2),
+                    ('w3', w3),
 
-                     ('M12', M12),
-                     ('M13', M13),
-                     ('M23', M23),
-                     ('M11', M11),
-                     ('M22', M22),
-                     ('M33', M33),
+                    ('M12', M12),
+                    ('M13', M13),
+                    ('M23', M23),
+                    ('M11', M11),
+                    ('M22', M22),
+                    ('M33', M33),
 
-                     ('dw1dr1', dw1dr1),
-                     ('dw1dr2', dw1dr2),
+                    ('dw1dr1', dw1dr1),
+                    ('dw1dr2', dw1dr2),
                     ('dw1dr3', dw1dr3),
 
                     ('dw2dr1', dw2dr1),
@@ -139,4 +145,5 @@ if __name__ == '__main__':
     # print(Y)
     # print('Z')
     # print(Z)
-    main()
+    # main()
+    compute_decomposition()

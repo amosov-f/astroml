@@ -1,19 +1,13 @@
-import math
 import time
-
-from numpy import cos
-
-from GC2019.gc2019 import read_gc2019, read_gaia_with_rv_in_galactocentric
-from common.gaia.with_rv import read_gaia_with_rv_1500, read_gaia_with_rv_full
-from common.spherical_decomposer import decompose_spherical
-from scripts.ogorod import prepare_mu_vr
 
 import pandas as pd
 import statsmodels.api as sm
 
-from common.spherical import taj, saj, tdj, sdj
+from common.gaia.with_rv import read_gaia_with_rv_full, SAMPLE, GDR2
 from common.gaia.with_rv import slices
 from common.pandas2 import split
+from common.spherical import taj, saj, tdj, sdj
+from common.spherical_decomposer import decompose_spherical
 
 N = 10
 KK = 4.738
@@ -52,11 +46,9 @@ def to_map(model):
         result[key] = (val, err)
     return result
 
-
-
-STEP = 400000
+STEP = 400000 if GDR2 else 20000 if SAMPLE else 2000000
 SLICE = STEP
-MAX = 6000000
+MAX = 6000000 if GDR2 else 300000 if SAMPLE else 30000000
 
 def main():
     start = time.time()
@@ -70,6 +62,7 @@ def main():
 
     coefs = {}
     errors = {}
+    distances = []
 
     table = {}
 
@@ -83,7 +76,7 @@ def main():
     s310 = []
     v310 = []
 
-    def f(slice):
+    def f(slice, _, dist_r):
         X, y = prepare_ols(slice)
         # X2, y2 = prepare_mu_vr(slice)
         r = 1 / slice['px']
@@ -103,6 +96,8 @@ def main():
         vsf = to_map(res)
         # ogorod = to_map(res2)
         rv = to_map(rv_model)
+
+        distances.append(dist_r)
 
         t211.append(f'{vsf["t_6"][0]:.1f}')
         s310.append(f'{vsf["s_10"][0]:.1f}')
@@ -159,17 +154,24 @@ def main():
         # put_to_table('v7/r', v7 / r, 1.831 * M12)
         # put_to_table('v8/r', v8 / r, 1.83 * C)
 
-        # for i in range(len(res.params)):
-        #     val = res.params[i]
-        #     err = res.bse[i]
-        #     key = res.params.keys()[i]
-        #     if key not in coefs:
-        #         coefs[key] = []
-        #     if key not in errors:
-        #         errors[key] = []
-        #     coefs[key].append(val)
-        #     errors[key].append(err)
-            # print(f'{key}={val}±{err}')
+        for i in range(len(res.params)):
+            val = res.params[i]
+            err = res.bse[i]
+            key = res.params.keys()[i]
+            if key not in coefs:
+                coefs[key] = []
+            if key not in errors:
+                errors[key] = []
+            coefs[key].append(val)
+            errors[key].append(err)
+            print(f'{key}={val}±{err}')
+
+        for i in range(len(rv_model.params)):
+            val = rv_model.params[i]
+            key = rv_model.params.keys()[i]
+            if key not in coefs:
+                coefs[key] = []
+            coefs[key].append(val)
 
     slices(f, dataset, MAX, STEP, SLICE, prepare=False)
 
@@ -181,17 +183,23 @@ def main():
             print(f'{val:.1f}'.replace('.', ','), end='\t')
         print()
 
-    # keys = list(coefs.keys())
-    # keys = keys[0:len(keys):2] + keys[1:len(keys):2]
-    # for k in keys:
-    #     print(f'{k}', end='\t')
-    #     for val, err in zip(coefs[k], errors[k]):
-    #         print(f'{val:.1f}\t{err:.1f}'.replace('.', ','), end='\t')
-    #     print()
+    print(end='\t')
+    for d in distances:
+        print(int(d), end='\t')
+    print()
+    keys = list(coefs.keys())
+    keys = keys[0:2 * len(keys) // 3:2] + keys[1:2 * len(keys) // 3:2] + keys[2 * len(keys) // 3:len(keys)]
+    for k in keys:
+        print(f'{k}', end='\t')
+        # for val, err in zip(coefs[k], errors[k]):
+        #     print(f'{val:.1f}\t{err:.1f}'.replace('.', ','), end='\t')
+        for val in coefs[k]:
+            print(f'{val:.1f}'.replace('.', ','), end='\t')
+        print()
 
-    print(f't211 {t211}')
-    print(f's310 {s310}')
-    print(f'v310 {v310}')
+    # print(f't211 {t211}')
+    # print(f's310 {s310}')
+    # print(f'v310 {v310}')
 
 
 if __name__ == '__main__':

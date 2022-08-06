@@ -93,15 +93,13 @@ class Deg:
                    cos2l=self.cos2l)
 
     def apply(self, b, l):
-        res = self.coeff * sin(l) ** self.sinl * cos(l) ** self.cosl * cos(2 * l) ** self.cos2l
-
-        hui = sin(b) ** self.sinb * cos(b) ** self.cosb * cos(2 * b) ** self.cos2b
-        res *= hui
-
-        # if self.sinb > 0:
-        #     return 0
-
-        return res
+        return self.coeff \
+               * sin(l) ** self.sinl \
+               * cos(l) ** self.cosl \
+               * cos(2 * l) ** self.cos2l \
+               * sin(b) ** self.sinb \
+               * cos(b) ** self.cosb \
+               * cos(2 * b) ** self.cos2b
 
     def __eq__(self, other):
         return self.key() == other.key()
@@ -158,9 +156,9 @@ mub_dw2dr3 = (R3 * ta2).with_name('mub', 'dw2dr3')
 mub_dM11dr1 = (R1 * q11).with_name('mub', 'dM11dr1')
 mub_dM11dr2 = (R2 * q11).with_name('mub', 'dM11dr2')
 mub_dM11dr3 = (R3 * q11).with_name('mub', 'dM11dr3')
-mub_dM12dr1 = (R1 * q12).with_name('mub', 'dM12dr1')
-mub_dM12dr2 = (R2 * q12).with_name('mub', 'dM12dr2')
-mub_dM12dr3 = (R3 * q12).with_name('mub', 'dM12dr3')
+mub_dM12dr1 = (R1 * q12).with_name('mub', 'dM12dr1') # !!!
+mub_dM12dr2 = (R2 * q12).with_name('mub', 'dM12dr2') # !!!
+mub_dM12dr3 = (R3 * q12).with_name('mub', 'dM12dr3') # !!!
 # mub_dM12dr1_cos2 = (R1 * q12_cos2).with_name('mub_dM12dr1_cos2')
 # mub_dM12dr2_cos2 = (R2 * q12_cos2).with_name('mub_dM12dr2_cos2')
 # mub_dM12dr3_cos2 = (R3 * q12_cos2).with_name('mub_dM12dr3_cos2')
@@ -211,9 +209,9 @@ vr_dM22dr3 = (R3 * R2 ** 2).with_name('vr', 'dM22dr3')
 vr_dM33dr1 = (R1 * R3 ** 2).with_name('vr', 'dM33dr1')
 vr_dM33dr2 = (R2 * R3 ** 2).with_name('vr', 'dM33dr2')
 vr_dM33dr3 = (R3 * R3 ** 2).with_name('vr', 'dM33dr3')
-vr_dM12dr1 = (R1 * R1 * R2).with_name('vr', 'dM12dr1')
-vr_dM12dr2 = (R2 * R1 * R2).with_name('vr', 'dM12dr2')
-vr_dM12dr3 = (R3 * R1 * R2).with_name('vr', 'dM12dr3')
+vr_dM12dr1 = (R1 * R1 * R2).with_name('vr', 'dM12dr1') # !!!
+vr_dM12dr2 = (R2 * R1 * R2).with_name('vr', 'dM12dr2') # !!!
+vr_dM12dr3 = (R3 * R1 * R2).with_name('vr', 'dM12dr3') # !!!
 vr_dM13dr1 = (R1 * R1 * R3).with_name('vr', 'dM13dr1')
 vr_dM13dr2 = (R2 * R1 * R3).with_name('vr', 'dM13dr2')
 vr_dM13dr3 = (R3 * R1 * R3).with_name('vr', 'dM13dr3')

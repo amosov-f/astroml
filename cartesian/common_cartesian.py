@@ -213,18 +213,19 @@ def dM11dr3(l, b, r):
                 vr_r=r * vr_dM11dr3.apply(b, l))
 
 
+# !!!
 def dM12dr1(l, b, r):
     return dict(kmul=r * mul_dM12dr1.apply(b, l),
                 kmub=r * mub_dM12dr1.apply(b, l),
                 vr_r=r * 2 * vr_dM12dr1.apply(b, l))
 
-
+# !!!
 def dM12dr2(l, b, r):
     return dict(kmul=r * mul_dM12dr2.apply(b, l),
                 kmub=r * mub_dM12dr2.apply(b, l),
                 vr_r=r * 2 * vr_dM12dr2.apply(b, l))
 
-
+# !!!
 def dM12dr3(l, b, r):
     return dict(kmul=r * mul_dM12dr3.apply(b, l),
                 kmub=r * mub_dM12dr3.apply(b, l),

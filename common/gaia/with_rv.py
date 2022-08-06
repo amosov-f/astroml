@@ -1,3 +1,4 @@
+import random
 from pathlib import Path
 
 import numpy as np
@@ -51,12 +52,14 @@ def slices(func, dataset, imax=6000000, step=400000, slice=400000, prepare=False
     if prepare:
         dataset = prepare_galaxy_dataset(dataset, with_pm_errors=False)
     dataset = dataset.sort_values(by='px', ascending=False)
+    print("pizza")
+    print(dataset.iloc[len(dataset) - 1]['px'])
     average_dists = []
     for l in range(0, min(imax, len(dataset)), step):
-        r = min(l + slice, len(dataset) - 1)
+        r = min(l + slice, len(dataset))
         print(f'Звезды под номерами от {l} до {r}')
         l_dist = distance(dataset.iloc[l])
-        r_dist = distance(dataset.iloc[r])
+        r_dist = distance(dataset.iloc[r - 1])
         m_dist = distance(dataset.iloc[(l + r) // 2])
         average_dist = average(distance(dataset.iloc[l:r]))
         average_dists.append(str(int(average_dist)))
@@ -70,7 +73,8 @@ def slices(func, dataset, imax=6000000, step=400000, slice=400000, prepare=False
 
 def read_raw_gaia_with_rv_no_errors():
     file_dir = Path(__file__).parent
-    return pd.read_csv(file_dir.joinpath('gdr3_short.csv'))
+    path = 'gdr3_short_sample.csv' if SAMPLE else 'full.tsv' if GDR2 else 'gdr3_short_notnull.csv'
+    return pd.read_csv(file_dir.joinpath(path), sep='\t' if GDR2 else ',')
 
 
 def read_raw_gaia_with_rv():
@@ -85,13 +89,16 @@ def read_gaia_with_rv_1500():
     return prepare_galaxy_dataset(df)
 
 
+SAMPLE = False
+GDR2 = False
+
 def read_gaia_with_rv_full():
     df = read_raw_gaia_with_rv_no_errors()
     return prepare_galaxy_dataset(df, with_pm_errors=False)
 
 
 def read_gaia_with_rv_xyz():
-    df = read_raw_gaia_with_rv()
+    df = read_raw_gaia_with_rv_no_errors()
     # df = df.iloc[0:10]
     df = df[(df.parallax > 0)]
     c = SkyCoord(ra=df.ra.values * u.deg,
