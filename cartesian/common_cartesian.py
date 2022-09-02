@@ -38,9 +38,9 @@ def convert(g, mul, mub, vr):
 
 
 def to_cartesian(g):
-    return pd.DataFrame(dict(x=g.cartesian.x.value / 1000,
-                             y=g.cartesian.y.value / 1000,
-                             z=g.cartesian.z.value / 1000,
+    return pd.DataFrame(dict(x=g.cartesian.x.value,
+                             y=g.cartesian.y.value,
+                             z=g.cartesian.z.value,
                              vx=g.velocity.d_x.value,
                              vy=g.velocity.d_y.value,
                              vz=g.velocity.d_z.value))
@@ -61,12 +61,18 @@ def apply(P, f):
     b = np.deg2rad(np.array(c.dec))
     r = np.array(c.distance)
     res = f(l, b, r)
+    mul_cosb = res["kmul"] / K
+    mub = res["kmub"] / K
+    vr = res["vr_r"] * r
+    # print(mul_cosb)
+    # print(mub)
+    # print(vr)
     sc = SkyCoord(frame="galactic",
                   l=l * u.rad,
                   b=b * u.rad,
-                  pm_l_cosb=res["kmul"] / K * u.mas / u.yr,
-                  pm_b=res["kmub"] / K * u.mas / u.yr,
-                  radial_velocity=res["vr_r"] * r * u.km / u.s,
+                  pm_l_cosb=mul_cosb * u.mas / u.yr,
+                  pm_b=mub * u.mas / u.yr,
+                  radial_velocity=vr * u.km / u.s,
                   distance=c.galactic.distance)
     return to_cartesian(sc)
 

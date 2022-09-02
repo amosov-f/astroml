@@ -8,7 +8,8 @@ from common.pandas2 import split
 def prepare_linear_equations(df, compute_equations):
     equations = compute_equations(df).fillna(0)
     zero_columns = equations.columns[(equations == 0).all()]
-    print("Totally zero columns, removing: " + str(zero_columns))
+    if len(zero_columns):
+        print("Totally zero columns, removing: " + str(zero_columns))
     equations = equations.loc[:, (equations != 0).any()]
     return split(equations)
 
@@ -16,16 +17,16 @@ def prepare_linear_equations(df, compute_equations):
 def compute_coeffs(df, compute_equations):
     X, y = prepare_linear_equations(df, compute_equations)
 
-    corr = np.corrcoef(X, rowvar=0)
+    # corr = np.corrcoef(X, rowvar=0)
 
 
-    print('evgen:')
-    names = {}
-    for i, name in enumerate(list(X)):
-        names[i] = name
-        print(f'{i}: {name}')
+    # print('evgen:')
+    # names = {}
+    # for i, name in enumerate(list(X)):
+    #     names[i] = name
+    #     print(f'{i}: {name}')
 
-    w, v = np.linalg.eig(corr)
+    # w, v = np.linalg.eig(corr)
 
     # print('w')
     # print(w)
@@ -34,19 +35,19 @@ def compute_coeffs(df, compute_equations):
     # print(v)
 
 
-    for i, name in enumerate(list(X)):
-        if w[i] < 0.0001:
-            print(f'{name}: {w[i]:.6f}')
-            for j, col in enumerate(v[:,i]):
-                if abs(col) > 0.1:
-                    print(f'\t{names[j]}={col:.6f}')
+    # for i, name in enumerate(list(X)):
+    #     if w[i] < 0.0001:
+    #         print(f'{name}: {w[i]:.6f}')
+    #         for j, col in enumerate(v[:,i]):
+    #             if abs(col) > 0.1:
+    #                 print(f'\t{names[j]}={col:.6f}')
 
 
 
     smm = sm.OLS(y, X)
 
     res = smm.fit()
-    print(res.summary2())
+    #print(res.summary2())
 
     y_pred = res.predict(X)
 

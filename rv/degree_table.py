@@ -116,7 +116,7 @@ ta1 = Deg('ta1', coeff=1, sinb=0, cosb=0, sinl=1, cosl=0)
 ta2 = Deg('ta2', coeff=1, sinb=0, cosb=0, sinl=0, cosl=1)
 
 p11 = Deg('p11', coeff=-1, sinb=0, cosb=1, sinl=1, cosl=1)
-p12 = Deg('p12', coeff=1, sinb=0, cosb=1, sinl=0, cosl=0, cos2l=1)
+p12 = Deg('p12', coeff=1, sinb=0, cosb=1, sinl=0, cosl=0, cos2l=1) # !!!
 # p12_cos2 = Deg('p12_cos2', sinb=0, cosb=1, sinl=0, cosl=2)
 # p12_1 = Deg('p12_1', sinb=0, cosb=1, sinl=0, cosl=0)
 p13 = Deg('p13', coeff=-1, sinb=1, cosb=0, sinl=1, cosl=0)
@@ -124,7 +124,7 @@ p22 = Deg('p22', coeff=1, sinb=0, cosb=1, sinl=1, cosl=1)
 p23 = Deg('p23', coeff=1, sinb=1, cosb=0, sinl=0, cosl=1)
 
 q11 = Deg('q11', coeff=-1, sinb=1, cosb=1, sinl=0, cosl=2)
-q12 = Deg('q12', coeff=-1, sinb=1, cosb=1, sinl=0, cosl=0, cos2l=1)
+q12 = Deg('q12', coeff=-2, sinb=1, cosb=1, sinl=1, cosl=1) # !!!
 # q12_cos2 = Deg('q12_cos2', sinb=1, cosb=1, sinl=0, cosl=2)
 # q12_1 = Deg('q12_1', sinb=1, cosb=1, sinl=0, cosl=0)
 q13 = Deg('q13', coeff=1, sinb=0, cosb=0, sinl=0, cosl=1, cos2b=1)
@@ -181,9 +181,9 @@ mub_dM33dr3 = (R3 * q33).with_name('mub', 'dM33dr3')
 mul_dM11dr1 = (R1 * p11).with_name('mul', 'dM11dr1')
 mul_dM11dr2 = (R2 * p11).with_name('mul', 'dM11dr2')
 mul_dM11dr3 = (R3 * p11).with_name('mul', 'dM11dr3')
-mul_dM12dr1 = (R1 * p12).with_name('mul', 'dM12dr1')
-mul_dM12dr2 = (R2 * p12).with_name('mul', 'dM12dr2')
-mul_dM12dr3 = (R3 * p12).with_name('mul', 'dM12dr3')
+mul_dM12dr1 = (R1 * p12).with_name('mul', 'dM12dr1') # !!!
+mul_dM12dr2 = (R2 * p12).with_name('mul', 'dM12dr2') # !!!
+mul_dM12dr3 = (R3 * p12).with_name('mul', 'dM12dr3') # !!!
 # mul_dM12dr1_cos2 = (R1 * p12_cos2).with_name('mul_dM12dr1_cos2')
 # mul_dM12dr2_cos2 = (R2 * p12_cos2).with_name('mul_dM12dr2_cos2')
 # mul_dM12dr3_cos2 = (R3 * p12_cos2).with_name('mul_dM12dr3_cos2')

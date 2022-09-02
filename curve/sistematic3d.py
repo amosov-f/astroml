@@ -1,8 +1,11 @@
+from pathlib import Path
+
 import matplotlib.pyplot as plt
 import numpy as np
 import pandas as pd
 from astropy import units as u
 from astropy.coordinates import SkyCoord, Distance
+import astropy.coordinates as coord
 from pandas import DataFrame
 from scipy import stats
 
@@ -14,11 +17,9 @@ from scripts.ogorod_fg import ogorod_fg_mul, ogorod_fg_mub, ogorod_fg_vr
 def read_gaia_with_rv_residuals():
     df = read_gaia_with_rv_full()
 
-    # df = df.sample(100000)
-
-    _, _, dmul = compute_coeffs(df, ogorod_fg_mul)
-    _, _, dmub = compute_coeffs(df, ogorod_fg_mub)
-    _, _, dvr = compute_coeffs(df, ogorod_fg_vr)
+    _, resl, dmul = compute_coeffs(df, ogorod_fg_mul)
+    _, resb, dmub = compute_coeffs(df, ogorod_fg_mub)
+    _, resvr, dvr = compute_coeffs(df, ogorod_fg_vr)
 
     c = SkyCoord(frame="galactic",
                  l=df.l.values * u.rad,
@@ -33,6 +34,8 @@ def read_gaia_with_rv_residuals():
 def read_gaia_with_rv_redisuals_xyz():
     c = read_gaia_with_rv_residuals()
 
+    c = c.transform_to(coord.Galactocentric)
+
    # df = df[(df.parallax > 0)]
 
     # g = c.transform_to(Galactocentric)
@@ -43,29 +46,23 @@ def read_gaia_with_rv_redisuals_xyz():
                              vy=np.array(c.velocity.d_y),
                              vz=np.array(c.velocity.d_z)))
 
-
-def main():
-    # print(spherical_to_cartesian(100, lat=0, lon=0))
-    # return
-    df = read_gaia_with_rv_redisuals_xyz()
-
-    min_x = -7000
-    max_x = 7000
-    bin_size = 700
-    bins_x = np.linspace(min_x, max_x, ((max_x - min_x) // bin_size) + 1)
-    min_y = -7000
-    max_y = 7000
-    bins_y = np.linspace(min_y, max_y, ((max_y - min_y) // bin_size) + 1)
+def show_velocity(df, title, subtitle, order, min_x, max_x, min_y, max_y, bin_count):
+    bins_x = np.linspace(min_x, max_x, bin_count + 1)
+    bins_y = np.linspace(min_y, max_y, bin_count + 1)
 
     x_col = df.x
     y_col = df.y
 
-    x_means, x_edge, y_edge, binnumber = stats.binned_statistic_2d(x_col, y_col, df.vx, statistic='mean', bins=(bins_x, bins_y))
-    x_std, x_edge, y_edge, binnumber = stats.binned_statistic_2d(x_col, y_col, df.vx, statistic='std', bins=(bins_x, bins_y))
+    x_means, x_edge, y_edge, binnumber = stats.binned_statistic_2d(x_col, y_col, df.vx, statistic='mean',
+                                                                   bins=(bins_x, bins_y))
+    x_std, x_edge, y_edge, binnumber = stats.binned_statistic_2d(x_col, y_col, df.vx, statistic='std',
+                                                                 bins=(bins_x, bins_y))
     y_means, _, _, _ = stats.binned_statistic_2d(x_col, y_col, df.vy, statistic='mean', bins=(bins_x, bins_y))
-    y_std, x_edge, y_edge, binnumber = stats.binned_statistic_2d(x_col, y_col, df.vy, statistic='std', bins=(bins_x, bins_y))
+    y_std, x_edge, y_edge, binnumber = stats.binned_statistic_2d(x_col, y_col, df.vy, statistic='std',
+                                                                 bins=(bins_x, bins_y))
     z_means, _, _, _ = stats.binned_statistic_2d(x_col, y_col, df.vz, statistic='mean', bins=(bins_x, bins_y))
-    z_std, x_edge, y_edge, binnumber = stats.binned_statistic_2d(x_col, y_col, df.vz, statistic='std', bins=(bins_x, bins_y))
+    z_std, x_edge, y_edge, binnumber = stats.binned_statistic_2d(x_col, y_col, df.vz, statistic='std',
+                                                                 bins=(bins_x, bins_y))
     count, _, _, _ = stats.binned_statistic_2d(x_col, y_col, df.vz, statistic='count', bins=(bins_x, bins_y))
 
     C = z_means
@@ -73,11 +70,6 @@ def main():
     x_averages = (x_edge[:-1] + x_edge[1:]) / 2
     y_averages = (y_edge[:-1] + y_edge[1:]) / 2
 
-    # bin_means, bin_edges, binnumber = stats.binned_statistic(df.x, df.vx, bins=bins_x, statistic='mean')
-    # plt.hlines(bin_means, bin_edges[:-1], bin_edges[1:], colors='r', lw=3, label='binned statistic of data')
-
-    # plt.hist2d(df.x, df.y, bins=(bins_x, bins_y), cmap='Blues')
-    # plt.show()
 
     X, Y = np.meshgrid(x_averages, y_averages)
 
@@ -100,12 +92,38 @@ def main():
 
     ax.quiver(X, Y, x_means, y_means, C, width=0.003)
 
-    width_x = 50
+    width_x = 10
+
+    fig.suptitle(title + ' ' + subtitle, fontsize=30)
 
     fig.set_figwidth(width_x)  # ширина и
     fig.set_figheight(width_x * (max_y - min_y) // (max_x - min_x))  # высота "Figure"
 
-    plt.show()
+    dir = f'fig/{title}'
+    Path(dir).mkdir(parents=True, exist_ok=True)
+
+    path = f'{dir}/{order}_{subtitle}.png'
+    fig.savefig(path)
+
+    # plt.show()
+
+
+def main():
+    # print(spherical_to_cartesian(100, lat=0, lon=0))
+    # return
+    df = read_gaia_with_rv_redisuals_xyz()
+
+    # bin_means, bin_edges, binnumber = stats.binned_statistic(df.x, df.vx, bins=bins_x, statistic='mean')
+    # plt.hlines(bin_means, bin_edges[:-1], bin_edges[1:], colors='r', lw=3, label='binned statistic of data')
+
+    # plt.hist2d(df.x, df.y, bins=(bins_x, bins_y), cmap='Blues')
+    # plt.show()
+    min_x = -14000
+    max_x = 14000
+    min_y = -14000
+    max_y = 14000
+
+    show_velocity(df, "pizza", "pasta2", 0, min_x=min_x, max_x=max_x, min_y=min_y, max_y=max_y, bin_count=10)
 
     # fig = df.x.plot.hist(bins=bins_x, figsize=(10, 5))
     # fig.set_xlabel("Расстояние [пк]")

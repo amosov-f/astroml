@@ -1,10 +1,10 @@
+import pandas as pd
 from sklearn import linear_model
 from sklearn.linear_model import LinearRegression
-from sklearn.pipeline import make_pipeline
 from sklearn.preprocessing import PolynomialFeatures
 
 from cartesian.common_cartesian import *
-import pandas as pd
+from curve.sistematic3d import show_velocity
 
 
 def main():
@@ -39,74 +39,91 @@ def main():
 
 
 def compute_decomposition():
+    # for i, z in enumerate([-1.5, -1, -0.5, 0, 0.5, 1, 1.5]):
+    #     pasta(z, i)
+    pasta(None, 0)
+
+
+def pasta(z, order):
 
     precision = 0.01
 
-    r2 = 2.95
-    dr = 0.100
+    r2 = 1.5
+    dr = 1
+    count = 10000
 
     _x, _y, _z = np.mgrid[-r2:r2 + dr:dr, -r2:r2 + dr:dr, -r2:r2 + dr:dr]
     P = np.array([_x.flatten(), _y.flatten(), _z.flatten()])
+    P = [
+        np.random.uniform(-r2, r2, count),
+        np.random.uniform(-r2, r2, count),
+        np.full(count, z) if z is not None else np.random.uniform(-r2, r2, count),
+        # np.random.uniform(-r2, r2, count)
+    ]
+
     # print(P)
     P = pd.DataFrame(dict(x=P[0], y=P[1], z=P[2]))
     p = PolynomialFeatures(degree=2).fit(P)
 
     PX = pd.DataFrame(p.transform(P), columns=p.get_feature_names(P.columns))
 
-    for name, f in [('U', U),
-                    ('V', V),
-                    ('W', W),
+    for name, f in [
+        ('U', U),
+        ('V', V),
+        ('W', W),
 
-                    ('w1', w1),
-                    ('w2', w2),
-                    ('w3', w3),
+        ('w1', w1),
+        ('w2', w2),
+        ('w3', w3),
 
-                    ('M12', M12),
-                    ('M13', M13),
-                    ('M23', M23),
-                    ('M11', M11),
-                    ('M22', M22),
-                    ('M33', M33),
+        ('M12', M12),
+        ('M13', M13),
+        ('M23', M23),
+        ('M11', M11),
+        ('M22', M22),
+        ('M33', M33),
 
-                    ('dw1dr1', dw1dr1),
-                    ('dw1dr2', dw1dr2),
-                    ('dw1dr3', dw1dr3),
+        ('dw1dr1', dw1dr1),
+        ('dw1dr2', dw1dr2),
+        ('dw1dr3', dw1dr3),
 
-                    ('dw2dr1', dw2dr1),
-                    ('dw2dr2', dw2dr2),
-                    ('dw2dr3', dw2dr3),
+        ('dw2dr1', dw2dr1),
+        ('dw2dr2', dw2dr2),
+        ('dw2dr3', dw2dr3),
 
-                    ('dw3dr1', dw3dr1),
-                    ('dw3dr2', dw3dr2),
-                    ('dw3dr3', dw3dr3),
+        ('dw3dr1', dw3dr1),
+        ('dw3dr2', dw3dr2),
+        ('dw3dr3', dw3dr3),
 
-                    ('dM11dr1', dM11dr1),
-                    ('dM11dr2', dM11dr2),
-                    ('dM11dr3', dM11dr3),
+        ('dM11dr1', dM11dr1),
+        ('dM11dr2', dM11dr2),
+        ('dM11dr3', dM11dr3),
 
-                    ('dM12dr1', dM12dr1),
-                    ('dM12dr2', dM12dr2),
-                    ('dM12dr3', dM12dr3),
+        ('dM12dr1', dM12dr1),
+        ('dM12dr2', dM12dr2),
+        ('dM12dr3', dM12dr3),
 
-                    ('dM13dr1', dM13dr1),
-                    ('dM13dr2', dM13dr2),
-                    ('dM13dr3', dM13dr3),
+        ('dM13dr1', dM13dr1),
+        ('dM13dr2', dM13dr2),
+        ('dM13dr3', dM13dr3),
 
-                    ('dM22dr1', dM22dr1),
-                    ('dM22dr2', dM22dr2),
-                    ('dM22dr3', dM22dr3),
+        ('dM22dr1', dM22dr1),
+        ('dM22dr2', dM22dr2),
+        ('dM22dr3', dM22dr3),
 
-                    ('dM23dr1', dM23dr1),
-                    ('dM23dr2', dM23dr2),
-                    ('dM23dr3', dM23dr3),
+        ('dM23dr1', dM23dr1),
+        ('dM23dr2', dM23dr2),
+        ('dM23dr3', dM23dr3),
 
-                    ('dM33dr1', dM33dr1),
-                    ('dM33dr2', dM33dr2),
-                    ('dM33dr3', dM33dr3),
-
-                    ]:
+        ('dM33dr1', dM33dr1),
+        ('dM33dr2', dM33dr2),
+        ('dM33dr3', dM33dr3),
+    ]:
         print(name)
         df = apply(P, f)
+
+        pd.set_option('display.max_rows', None)
+        # print(df)
         for vname, y in [('vx', df.vx), ('vy', df.vy), ('vz', df.vz)]:
 
             # print(features)
@@ -124,6 +141,17 @@ def compute_decomposition():
 
             # print(model.score(X, y))
             print()
+
+        min_x = np.min(df.x)
+        max_x = np.max(df.x)
+
+        min_y = np.min(df.y)
+        max_y = np.max(df.y)
+
+        if z:
+            show_velocity(df, name, f"{z}", order, min_x, max_x, min_y, max_y, 10)
+
+        # ax.quiver(X, Y, x_means, y_means, C, width=0.003)
 
         print()
         print()
