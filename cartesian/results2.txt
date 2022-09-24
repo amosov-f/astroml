@@ -1,7 +1,101 @@
-
 vx = 	+ -9.65	 + -0.79 * x + 26.04 * y	+ -0.67 * x^2	+ 2.30 * x y	+ -0.03 * y^2
 vy = 	+ -20.56	                        + -1.79 * x^2	+ -1.83 * y^2	+ -12.54 * z^2
 vz = 	+ -6.94   	                        + -0.09 * x^2	+ -0.09 * y^2
+
+
+23275503
+0.5
+Index(['1', 'x', 'y', 'z', 'x^2', 'x y', 'x z', 'y^2', 'y z', 'z^2'], dtype='object')
+vx = 	+ -10.28 * 1	+ -1.52 * x	+ 26.71 * y	+ -0.34 * x^2	+ 2.55 * x y
+vy = 	+ -21.35 * 1	+ -0.08 * x	+ -1.33 * x^2	+ 0.18 * x y	+ -1.49 * y^2	+ -15.42 * z^2
+vz = 	+ -7.40 * 1	+ -0.09 * x^2	+ -0.02 * y^2
+
+30667161
+0.5
+Index(['1', 'x', 'y', 'z', 'x^2', 'x y', 'x z', 'y^2', 'y z', 'z^2'], dtype='object')
+vx = 	+ -10.73 * 1	+ -0.33 * x	+ 24.88 * y	+ -0.12 * x^2	+ 2.32 * x y
+vy = 	+ -21.06 * 1	+ -4.61 * x	+ -1.86 * x^2	+ 0.09 * x y	+ -1.14 * y^2	+ 0.12 * y z	+ -8.44 * z^2
+vz = 	+ -7.27 * 1	+ -0.35 * x	+ 0.01 * y	+ 0.04 * x y	+ -0.06 * y^2	+ 0.08 * y z
+
+VectorPlot[{+ -0.12 * x^2	+ 2.32 * x y, + -1.86 * x^2	+ 0.09 * x y	+ -1.14 * y^2},{x, -8, 8} {y, -8, 8}]
+VectorPlot[{+ -0.12 * x^2	+ 2.32 * x y, + -1.86 * x^2	+ 0.09 * x y	+ -1.14 * y^2},{x, -3, 3} {y, -3, 3}]
+
+VectorPlot[{+ -1.52 * x	+ 26.71 * y, + -0.08 * x},{x, -3, 3} {y, -3, 3}]
+
+VectorPlot[{+ -0.33 * x	+ 24.88 * y	+ -0.12 * x^2	+ 2.32 * x y, + -4.61 * x	+ -1.86 * x^2	+ 0.09 * x y	+ -1.14 * y^2},{x, -8, 8} {y, -8, 8}]
+
+
+=== Представление полной модели в галактоцентрической системе
+
+
+30667161
+0.5
+Index(['1', 'x', 'y', 'z', 'x^2', 'x y', 'x z', 'y^2', 'y z', 'z^2'], dtype='object')
+vx = 	+ 0.06 * x	+ 42.09 * y	+ 0.03 * x^2	+ 2.09 * x y	+ 0.01 * x z
+vy = 	+ 45.07 * 1	+ -39.20 * x	+ -2.11 * x^2	+ 0.17 * x z	+ -1.02 * y^2	+ 0.07 * y z	+ -7.91 * z^2
+vz = 	+ 0.29 * x	+ 0.04 * x^2	+ -0.01 * x y	+ -0.05 * y^2	+ 0.08 * y z
+
+
+VectorPlot[{+ 0.06 * x	+ 42.09 * y	+ 0.03 * x^2	+ 2.09 * x y, + 45.07 * 1	+ -39.20 * x	+ -2.11 * x^2 -1.02 * y^2 },{x, -16, 0} {y, -8, 8}]
+VectorPlot[{+ 0.06 * x	+ 42.09 * y	+ 0.03 * x^2	+ 2.09 * x y, + 45.07 * 1	+ -39.20 * x	+ -2.11 * x^2 -1.02 * y^2 },{x, -16, 16} {y, -16, 16}]
+
+
+=== Представление линейной скорости в галактоцентричной системе
+
+Name: x, Length: 30667161, dtype: float64
+WARNING: AstropyDeprecationWarning: Transforming a frame instance to a frame class (as opposed to another frame instance) will not be supported in the future.  Either explicitly instantiate the target frame, or first convert the source frame instance to a `astropy.coordinates.SkyCoord` and use its `transform_to()` method. [astropy.coordinates.baseframe]
+Index(['1', 'x', 'y', 'z', 'x^2', 'x y', 'x z', 'y^2', 'y z', 'z^2'], dtype='object')
+vx = 	+ 0.30 * x	+ 26.56 * y	+ 0.06 * x^2	+ -0.16 * x y	+ -0.03 * y^2
+vy = 	+ 105.21 * 1	+ -15.80 * x	+ -0.28 * x^2	+ -0.04 * x y	+ 0.05 * x z	+ 0.08 * y^2	+ 0.12 * z^2
+vz = 	+ 0.25 * x	+ 0.03 * x^2	+ -0.02 * x y	+ -0.02 * y^2
+
+
+VectorPlot[{+ 0.30 * x	+ 26.56 * y	+ 0.06 * x^2	+ -0.16 * x y	+ -0.03 * y^2, + 105.21 * 1	+ -15.80 * x	+ -0.28 * x^2	+ -0.04 * x y	+ 0.08 * y^2},{x, -16, 0} {y, -8, 8}]
+VectorPlot[{+ 0.30 * x	+ 26.56 * y	+ 0.06 * x^2	+ -0.16 * x y	+ -0.03 * y^2, + 105.21 * 1	+ -15.80 * x	+ -0.28 * x^2	+ -0.04 * x y	+ 0.08 * y^2},{x, -16, 16} {y, -16, 16}]
+
+==== Представление остатков от линейной скорости в галактоцентической системе
+
+Index(['1', 'x', 'y', 'z', 'x^2', 'x y', 'x z', 'y^2', 'y z', 'z^2'], dtype='object')
+vx = 	+ -3.36 * x	+ 14.37 * y	+ -0.22 * x^2	+ 2.10 * x y	+ 0.09 * y^2
+/Users/amosov-f/Documents/univer/astroml/venv/lib/python3.9/site-packages/sklearn/linear_model/_coordinate_descent.py:530: ConvergenceWarning: Objective did not converge. You might want to increase the number of iterations. Duality gap: 226896076.75267792, tolerance: 191067401.01514122
+  model = cd_fast.enet_coordinate_descent(
+vy = 	+ 166.31 * 1	+ -28.10 * x	+ -2.12 * x^2	+ 0.04 * x y	+ 0.10 * x z	+ -1.02 * y^2	+ 0.08 * y z	+ -7.91 * z^2
+vz = 	+ -1.71 * x	+ -0.09 * x^2	+ 0.08 * y z
+
+
+VectorPlot[{+ -3.36 * x	+ 14.37 * y	+ -0.22 * x^2	+ 2.10 * x y	+ 0.09 * y^2, + 166.31 * 1	+ -28.10 * x	+ -2.12 * x^2	+ 0.04 * x y -1.02 * y^2},{x, -16, 0} {y, -8, 8}]
+
+
+
+
+
+
+====== Разница моделей
+
+vx = 	+ 0.06 * x	+ 42.09 * y	+ 0.03 * x^2	+ 2.09 * x y	+ 0.01 * x z
+vy = 	+ 45.07 * 1	+ -39.20 * x	+ -2.11 * x^2	+ 0.17 * x z	+ -1.02 * y^2	+ 0.07 * y z	+ -7.91 * z^2
+
+
+vx = 	+ 0.30 * x	+ 26.56 * y	+ 0.06 * x^2	+ -0.16 * x y	+ -0.03 * y^2
+vy = 	+ 105.21 * 1	+ -15.80 * x	+ -0.28 * x^2	+ -0.04 * x y	+ 0.05 * x z	+ 0.08 * y^2	+ 0.12 * z^2
+
+
+vx = + (0.06 - 0.30) * x + (42.09 - 26.56) * y	+ (0.03 - 0.06) * x^2	+ (2.09 - -0.16)  * x y + 0.03 * y^2
+vy = 	+ (45.07 - 105.21) * 1	+ (-39.20 + 15.80) * x	+ (-2.11 + 0.28) * x^2	+ (-1.02 - 0.08) * y^2 + 0.04 * x y
+
+VectorPlot[{−0.24 * x + (15.53) * y	+ (−0.03) * x^2	+ (2.25)  * x y + 0.03 * y^2, + (−60.14) * 1	+ (−23.4) * x	+ (−1.83) * x^2	+ (−1.1) * y^2 + 0.04 * x y},{x, -16, 0} {y, -8, 8}]
+VectorPlot[{−0.24 * x + (15.53) * y	+ (−0.03) * x^2	+ (2.25)  * x y + 0.03 * y^2, + (−60.14) * 1	+ (−23.4) * x	+ (−1.83) * x^2	+ (−1.1) * y^2 + 0.04 * x y},{x, -16, 16} {y, -16, 16}]
+
+
+
+==== Скорость vy вдоль оси x
+
+квадратичная
+vy = 	+ 45.07 * 1	+ -39.20 * x	+ -2.11 * x^2
+
+линейная
+vy = 	+ 105.21 * 1	+ -15.80 * x	+ -0.28 * x^2
+
 
 в vx входят dM11dr2 dw3dr1 dM11dr1
 в vy входит dM22dr2 dM12dr1
@@ -9,284 +103,235 @@ vz = 	+ -6.94   	                        + -0.09 * x^2	+ -0.09 * y^2
 в vx = - dw3dr1 + dM11dr2     + dM12dr1
 в vy = - dw3dr1 - dM22dr2     + dw1dr3 - dM23dr3
 
-
-
-
-
-
-
-
 U
-vx = 	+ -1.00 * 1
-vy =
-vz =
+vx = 	+ -1.00 * 1	
+vy = 	
+vz = 	
 
 
 V
-vx =
-vy = 	+ -1.00 * 1
-vz =
+vx = 	
+vy = 	+ -1.00 * 1	
+vz = 	
 
 
 W
-vx =
-vy =
-vz = 	+ -1.00 * 1
+vx = 	
+vy = 	
+vz = 	+ -1.00 * 1	
 
 
 w1
-vx =
-vy = 	+ -1.00 * z
-vz = 	+ 1.00 * y
+vx = 	
+vy = 	+ -1.00 * z	
+vz = 	+ 1.00 * y	
 
 
 w2
-vx = 	+ 1.00 * z
-vy =
-vz = 	+ -1.00 * x
+vx = 	+ 1.00 * z	
+vy = 	
+vz = 	+ -1.00 * x	
 
 
 w3
-vx = 	+ -1.00 * y
-vy = 	+ 1.00 * x
-vz =
+vx = 	+ -1.00 * y	
+vy = 	+ 1.00 * x	
+vz = 	
 
 
 M12
-vx = 	+ 1.00 * y
-vy = 	+ 1.00 * x
-vz =
+vx = 	+ 1.00 * y	
+vy = 	+ 1.00 * x	
+vz = 	
 
 
 M13
-vx = 	+ 1.00 * z
-vy =
-vz = 	+ 1.00 * x
+vx = 	+ 1.00 * z	
+vy = 	
+vz = 	+ 1.00 * x	
 
 
 M23
-vx =
-vy = 	+ 1.00 * z
-vz = 	+ 1.00 * y
+vx = 	
+vy = 	+ 1.00 * z	
+vz = 	+ 1.00 * y	
 
 
 M11
-vx = 	+ 1.00 * x
-vy =
-vz =
+vx = 	+ 1.00 * x	
+vy = 	
+vz = 	
 
 
 M22
-vx =
-vy = 	+ 1.00 * y
-vz =
+vx = 	
+vy = 	+ 1.00 * y	
+vz = 	
 
 
 M33
-vx =
-vy =
-vz = 	+ 1.00 * z
+vx = 	
+vy = 	
+vz = 	+ 1.00 * z	
 
 
 dw1dr1
-vx =
-vy = 	+ -1.00 * x z
-vz = 	+ 1.00 * x y
+vx = 	
+vy = 	+ -1.00 * x z	
+vz = 	+ 1.00 * x y	
 
 
 dw1dr2
-vx =
-vy = 	+ -1.00 * y z
-vz = 	+ 1.00 * y^2
+vx = 	
+vy = 	+ -1.00 * y z	
+vz = 	+ 1.00 * y^2	
 
 
 dw1dr3
-vx =
-vy = 	+ -1.00 * z^2
-vz = 	+ 1.00 * y z
+vx = 	
+vy = 	+ -1.00 * z^2	
+vz = 	+ 1.00 * y z	
 
 
 dw2dr1
-vx = 	+ 1.00 * x z
-vy =
-vz = 	+ -1.00 * x^2
+vx = 	+ 1.00 * x z	
+vy = 	
+vz = 	+ -1.00 * x^2	
 
 
 dw2dr2
-vx = 	+ 1.00 * y z
-vy =
-vz = 	+ -1.00 * x y
+vx = 	+ 1.00 * y z	
+vy = 	
+vz = 	+ -1.00 * x y	
 
 
 dw2dr3
-vx = 	+ 1.00 * z^2
-vy =
-vz = 	+ -1.00 * x z
+vx = 	+ 1.00 * z^2	
+vy = 	
+vz = 	+ -1.00 * x z	
 
 
 dw3dr1
-vx = 	+ -1.00 * x y
-vy = 	+ 1.00 * x^2
-vz =
+vx = 	+ -1.00 * x y	
+vy = 	+ 1.00 * x^2	
+vz = 	
 
 
 dw3dr2
-vx = 	+ -1.00 * y^2
-vy = 	+ 1.00 * x y
-vz =
+vx = 	+ -1.00 * y^2	
+vy = 	+ 1.00 * x y	
+vz = 	
 
 
 dw3dr3
-vx = 	+ -1.00 * y z
-vy = 	+ 1.00 * x z
-vz =
+vx = 	+ -1.00 * y z	
+vy = 	+ 1.00 * x z	
+vz = 	
 
 
 dM11dr1
-vx = 	+ 1.00 * x^2
-vy =
-vz =
+vx = 	+ 1.00 * x^2	
+vy = 	
+vz = 	
 
 
 dM11dr2
-vx = 	+ 1.00 * x y
-vy =
-vz =
+vx = 	+ 1.00 * x y	
+vy = 	
+vz = 	
 
 
 dM11dr3
-vx = 	+ 1.00 * x z
-vy =
-vz =
+vx = 	+ 1.00 * x z	
+vy = 	
+vz = 	
 
 
 dM12dr1
-vx = 	+ 0.07 * 1	+ 0.12 * x^2	+ 0.80 * x y	+ -0.12 * y^2	+ 0.07 * z^2
-vy = 	+ 0.30 * 1	+ 0.93 * x^2	+ -0.07 * y^2	+ -0.12 * z^2
-vz = 	+ -0.20 * x z	+ 0.40 * y z
+vx = 	+ 1.00 * x y	
+vy = 	+ 1.00 * x^2	
+vz = 	
 
 
 dM12dr2
-vx = 	+ 0.30 * 1	+ -0.07 * x^2	+ 0.93 * y^2	+ -0.12 * z^2
-vy = 	+ -0.07 * 1	+ 0.12 * x^2	+ 0.80 * x y	+ -0.12 * y^2	+ -0.07 * z^2
-vz = 	+ 0.40 * x z	+ 0.20 * y z
+vx = 	+ 1.00 * y^2	
+vy = 	+ 1.00 * x y	
+vz = 	
 
 
 dM12dr3
-vx = 	+ 0.16 * x z	+ 0.76 * y z
-vy = 	+ 0.76 * x z	+ -0.16 * y z
-vz = 	+ -0.25 * x^2	+ 0.40 * x y	+ 0.25 * y^2
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-M13
-vx = 	+ 1.00 * z
-vy =
-vz = 	+ 1.00 * x
+vx = 	+ 1.00 * y z	
+vy = 	+ 1.00 * x z	
+vz = 	
 
 
 dM13dr1
-vx = 	+ 1.00 * x z
-vy =
-vz = 	+ 1.00 * x^2
-
-
-dM13dr1
-vx = z
-vy = 0
-vz = 2*x
-
-
-
-
-
-
-
-
-
-
-
-
-
-
+vx = 	+ 1.00 * x z	
+vy = 	
+vz = 	+ 1.00 * x^2	
 
 
 dM13dr2
-vx = 	+ 1.00 * y z
-vy =
-vz = 	+ 1.00 * x y
+vx = 	+ 1.00 * y z	
+vy = 	
+vz = 	+ 1.00 * x y	
 
 
 dM13dr3
-vx = 	+ 1.00 * z^2
-vy =
-vz = 	+ 1.00 * x z
+vx = 	+ 1.00 * z^2	
+vy = 	
+vz = 	+ 1.00 * x z	
 
 
 dM22dr1
-vx =
-vy = 	+ 1.00 * x y
-vz =
+vx = 	
+vy = 	+ 1.00 * x y	
+vz = 	
 
 
 dM22dr2
-vx =
-vy = 	+ 1.00 * y^2
-vz =
+vx = 	
+vy = 	+ 1.00 * y^2	
+vz = 	
 
 
 dM22dr3
-vx =
-vy = 	+ 1.00 * y z
-vz =
+vx = 	
+vy = 	+ 1.00 * y z	
+vz = 	
 
 
 dM23dr1
-vx =
-vy = 	+ 1.00 * x z
-vz = 	+ 1.00 * x y
+vx = 	
+vy = 	+ 1.00 * x z	
+vz = 	+ 1.00 * x y	
 
 
 dM23dr2
-vx =
-vy = 	+ 1.00 * y z
-vz = 	+ 1.00 * y^2
+vx = 	
+vy = 	+ 1.00 * y z	
+vz = 	+ 1.00 * y^2	
 
 
 dM23dr3
-vx =
-vy = 	+ 1.00 * z^2
-vz = 	+ 1.00 * y z
+vx = 	
+vy = 	+ 1.00 * z^2	
+vz = 	+ 1.00 * y z	
 
 
 dM33dr1
-vx =
-vy =
-vz = 	+ 1.00 * x z
+vx = 	
+vy = 	
+vz = 	+ 1.00 * x z	
 
 
 dM33dr2
-vx =
-vy =
-vz = 	+ 1.00 * y z
+vx = 	
+vy = 	
+vz = 	+ 1.00 * y z	
 
 
 dM33dr3
-vx =
-vy =
-vz = 	+ 1.00 * z^2
-
-собрать результат в один word
-прислать рисунки
+vx = 	
+vy = 	
+vz = 	+ 1.00 * z^2	

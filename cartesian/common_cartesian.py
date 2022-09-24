@@ -1,4 +1,4 @@
-from astropy.coordinates import SkyCoord, Distance, Galactic
+from astropy.coordinates import SkyCoord, Distance, Galactic, Galactocentric
 from astropy import units as u
 import pandas as pd
 
@@ -9,17 +9,20 @@ import numpy as np
 from rv.degree_table import *
 
 
-def read_pizza():
+def read_radec():
     df = read_raw_gaia_with_rv_no_errors()
     # df = df[(df.parallax > 0)]
-    df = df[(df.parallax > 0.33)]
+    df = df[(df.parallax > 1.0 / 8)]
     print(len(df))
-    c = SkyCoord(ra=df.ra.values * u.deg,
+    return SkyCoord(ra=df.ra.values * u.deg,
                  dec=df.dec.values * u.deg,
                  pm_ra_cosdec=df.pmra.values * u.mas / u.yr,
                  pm_dec=df.pmdec.values * u.mas / u.yr,
                  radial_velocity=df.radial_velocity.values * u.km / u.s,
                  distance=Distance(parallax=df.parallax.values * u.mas))
+
+def read_pizza():
+    c = read_radec()
     g = c.transform_to(Galactic)
     return g
 
@@ -37,17 +40,17 @@ def convert(g, mul, mub, vr):
                     pm_b=mub(l, b, r) * u.mas / u.yr, radial_velocity=vr(l, b, r) * u.km / u.s, distance=g.distance)
 
 
-def to_cartesian(g):
-    return pd.DataFrame(dict(x=g.cartesian.x.value,
-                             y=g.cartesian.y.value,
-                             z=g.cartesian.z.value,
+def to_cartesian(g, pc=False):
+    return pd.DataFrame(dict(x=g.cartesian.x.value / (1000 if pc else 1),
+                             y=g.cartesian.y.value / (1000 if pc else 1),
+                             z=g.cartesian.z.value / (1000 if pc else 1),
                              vx=g.velocity.d_x.value,
                              vy=g.velocity.d_y.value,
                              vz=g.velocity.d_z.value))
 
 def read_gaia_with_rv_cartesian():
     g = read_pizza()
-    return to_cartesian(g)
+    return to_cartesian(g, pc=True)
 
 # VectorPlot[{-0.67 * x^2 + 2.30 * x * y, -1.79 * x^2 + -1.83 * y^2 }, {x, -3, 3}, {y, -3, 3}]
 

@@ -1,4 +1,5 @@
 import pandas as pd
+from astropy.coordinates import CartesianRepresentation
 from sklearn import linear_model
 from sklearn.linear_model import LinearRegression
 from sklearn.preprocessing import PolynomialFeatures
@@ -8,25 +9,57 @@ from curve.sistematic3d import show_velocity
 
 
 def main():
-    g = read_pizza()
+    # df = read_gaia_with_rv_cartesian()
+
+    # X1 = df[['x', 'y', 'z']]
+
+    # model = linear_model.LinearRegression()
+    # # linear_vx = (df.vx - model.fit(X1, df.vx).predict(X1)).values
+    # # linear_vy = (df.vy - model.fit(X1, df.vy).predict(X1)).values
+    # # linear_vz = (df.vz - model.fit(X1, df.vz).predict(X1)).values
+    #
+    # linear_vx = model.fit(X1, df.vx).predict(X1)
+    # linear_vy = model.fit(X1, df.vy).predict(X1)
+    # linear_vz = model.fit(X1, df.vz).predict(X1)
+    #
+    # print(df.x)
+    #
+    # c = Galactic(u=df.x * u.kpc, v=df.y * u.kpc, w=df.z * u.kpc, representation_type="cartesian", U=linear_vx * u.km/u.s, V=linear_vy * u.km/u.s,  W=linear_vz * u.km/u.s)
+    c = read_radec()
+    g = c.transform_to(Galactocentric)
+
     df = to_cartesian(g)
+
     X1 = df[['x', 'y', 'z']]
+
     p = PolynomialFeatures(degree=2).fit(X1)
     # print(p.get_feature_names(X.columns))
 
     X = pd.DataFrame(p.transform(X1), columns=p.get_feature_names(X1.columns))
 
+    precision = 0.01
+
+    alpha = 0.5
+    print(alpha)
+
     print(X.columns)
 
     for vname, y in [('vx', df.vx), ('vy', df.vy), ('vz', df.vz)]:
-        model = linear_model.Lasso(alpha=1, fit_intercept=False)
+        model = linear_model.Lasso(alpha=alpha, fit_intercept=False)
     # model = make_pipeline(PolynomialFeatures(degree=1), LinearRegression(fit_intercept=False))
     #     model = LinearRegression(fit_intercept=False)
         model.fit(X, y)
 
+        y_pred = model.predict(X)
+        diff = y - y_pred
+
+
+
+        # model.coef_[]
+
         print(vname + ' = ', end='\t')
         for i, col in enumerate(X.columns.values):
-            if abs(model.coef_[i]) > 0:
+            if abs(model.coef_[i]) > precision:
                 print(f'+ {model.coef_[i]:.2f} * {col}', end='\t')
 
     # print(model.score(X, y))
@@ -34,7 +67,7 @@ def main():
 
     print()
 
-    compute_decomposition()
+    # compute_decomposition()
 
 
 
@@ -123,14 +156,15 @@ def pasta(z, order):
         df = apply(P, f)
 
         pd.set_option('display.max_rows', None)
+
         # print(df)
         for vname, y in [('vx', df.vx), ('vy', df.vy), ('vz', df.vz)]:
 
             # print(features)
             # model = linear_model.Lasso(alpha=1, fit_intercept=False)
             # model = make_pipeline(PolynomialFeatures(degree=2), LinearRegression(fit_intercept=False))
-            model = LinearRegression(fit_intercept=False)
-            # model = linear_model.Lasso(alpha=0.001, fit_intercept=False)
+            # model = LinearRegression(fit_intercept=False)
+            model = linear_model.Lasso(alpha=0.001, fit_intercept=False)
             model.fit(PX, y)
 
             # print(model.)
@@ -138,6 +172,8 @@ def pasta(z, order):
             for i, col in enumerate(PX.columns.values):
                 if abs(model.coef_[i]) > precision:
                     print(f'+ {model.coef_[i]:.2f} * {col}', end='\t')
+
+
 
             # print(model.score(X, y))
             print()
@@ -173,5 +209,5 @@ if __name__ == '__main__':
     # print(Y)
     # print('Z')
     # print(Z)
-    # main()
-    compute_decomposition()
+    main()
+    # compute_decomposition()
