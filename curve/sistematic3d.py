@@ -46,24 +46,32 @@ def read_gaia_with_rv_redisuals_xyz():
                              vy=np.array(c.velocity.d_y),
                              vz=np.array(c.velocity.d_z)))
 
-def show_velocity(df, title, subtitle, order, min_x, max_x, min_y, max_y, bin_count):
+def show_velocity(df, title, subtitle, order, min_x, max_x, min_y, max_y, min_z, max_z, bin_count):
     bins_x = np.linspace(min_x, max_x, bin_count + 1)
     bins_y = np.linspace(min_y, max_y, bin_count + 1)
+
+    df = df[(df.x >= min_x) & (df.x <= max_x) & (df.y >= min_y) & (df.y <= max_y) & (df.z >= min_z) & (df.z <= max_z)]
+
+    print(len(df))
 
     x_col = df.x
     y_col = df.y
 
     x_means, x_edge, y_edge, binnumber = stats.binned_statistic_2d(x_col, y_col, df.vx, statistic='mean',
                                                                    bins=(bins_x, bins_y))
-    x_std, x_edge, y_edge, binnumber = stats.binned_statistic_2d(x_col, y_col, df.vx, statistic='std',
-                                                                 bins=(bins_x, bins_y))
+
+    print("x done")
+    # x_std, x_edge, y_edge, binnumber = stats.binned_statistic_2d(x_col, y_col, df.vx, statistic='std',
+    #                                                              bins=(bins_x, bins_y))
     y_means, _, _, _ = stats.binned_statistic_2d(x_col, y_col, df.vy, statistic='mean', bins=(bins_x, bins_y))
-    y_std, x_edge, y_edge, binnumber = stats.binned_statistic_2d(x_col, y_col, df.vy, statistic='std',
-                                                                 bins=(bins_x, bins_y))
+    # y_std, x_edge, y_edge, binnumber = stats.binned_statistic_2d(x_col, y_col, df.vy, statistic='std',
+    #                                                              bins=(bins_x, bins_y))
+    print("y done")
     z_means, _, _, _ = stats.binned_statistic_2d(x_col, y_col, df.vz, statistic='mean', bins=(bins_x, bins_y))
-    z_std, x_edge, y_edge, binnumber = stats.binned_statistic_2d(x_col, y_col, df.vz, statistic='std',
-                                                                 bins=(bins_x, bins_y))
-    count, _, _, _ = stats.binned_statistic_2d(x_col, y_col, df.vz, statistic='count', bins=(bins_x, bins_y))
+    # z_std, x_edge, y_edge, binnumber = stats.binned_statistic_2d(x_col, y_col, df.vz, statistic='std',
+    #                                                              bins=(bins_x, bins_y))
+    print("z done")
+    # count, _, _, _ = stats.binned_statistic_2d(x_col, y_col, df.vz, statistic='count', bins=(bins_x, bins_y))
 
     C = z_means
 
@@ -83,21 +91,24 @@ def show_velocity(df, title, subtitle, order, min_x, max_x, min_y, max_y, bin_co
     np.savetxt('x_points.tsv', x_averages, fmt='%1.0f', delimiter=',')
     np.savetxt('y_points.tsv', y_averages, fmt='%1.0f', delimiter=',')
     np.savetxt('vx_median.tsv', x_means, fmt='%1.3f', delimiter=',')
-    np.savetxt('vx_std.tsv', x_std, fmt='%1.3f', delimiter=',')
+    # np.savetxt('vx_std.tsv', x_std, fmt='%1.3f', delimiter=',')
     np.savetxt('vy_median.tsv', y_means, fmt='%1.3f', delimiter=',')
-    np.savetxt('vy_std.tsv', y_std, fmt='%1.3f', delimiter=',')
+    # np.savetxt('vy_std.tsv', y_std, fmt='%1.3f', delimiter=',')
     np.savetxt('vz_median.tsv', z_means, fmt='%1.3f', delimiter=',')
-    np.savetxt('vz_std.tsv', z_std, fmt='%1.3f', delimiter=',')
-    np.savetxt('count.tsv', count, fmt='%1.0f', delimiter=',')
+    # np.savetxt('vz_std.tsv', z_std, fmt='%1.3f', delimiter=',')
+    # np.savetxt('count.tsv', count, fmt='%1.0f', delimiter=',')
 
     ax.quiver(X, Y, x_means, y_means, C, width=0.003)
 
     width_x = 10
 
-    fig.suptitle(title + ' ' + subtitle, fontsize=30)
+    fig.suptitle(title + '\n' + subtitle, fontsize=30)
 
     fig.set_figwidth(width_x)  # ширина и
     fig.set_figheight(width_x * (max_y - min_y) // (max_x - min_x))  # высота "Figure"
+
+    plt.xlabel('X, кпк')
+    plt.ylabel('Y, кпк')
 
     dir = f'fig/{title}'
     Path(dir).mkdir(parents=True, exist_ok=True)
@@ -105,7 +116,7 @@ def show_velocity(df, title, subtitle, order, min_x, max_x, min_y, max_y, bin_co
     path = f'{dir}/{order}_{subtitle}.png'
     fig.savefig(path)
 
-    # plt.show()
+    plt.show()
 
 
 def main():

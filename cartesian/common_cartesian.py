@@ -1,6 +1,9 @@
 from astropy.coordinates import SkyCoord, Distance, Galactic, Galactocentric
 from astropy import units as u
 import pandas as pd
+from sklearn import linear_model
+from sklearn.linear_model import LinearRegression
+from sklearn.preprocessing import PolynomialFeatures
 
 from common.gaia.with_rv import read_raw_gaia_with_rv_no_errors
 from numpy import sin, cos
@@ -21,7 +24,7 @@ def read_radec():
                  radial_velocity=df.radial_velocity.values * u.km / u.s,
                  distance=Distance(parallax=df.parallax.values * u.mas))
 
-def read_pizza():
+def read_galactic():
     c = read_radec()
     g = c.transform_to(Galactic)
     return g
@@ -49,8 +52,42 @@ def to_cartesian(g, pc=False):
                              vz=g.velocity.d_z.value))
 
 def read_gaia_with_rv_cartesian():
-    g = read_pizza()
+    g = read_galactic()
     return to_cartesian(g, pc=True)
+
+
+def read_gaia_with_rv_residuals(degree):
+    df = read_gaia_with_rv_cartesian()
+
+    X = df[['x', 'y', 'z']]
+
+    p = PolynomialFeatures(degree=degree).fit(X)
+
+    X = pd.DataFrame(p.transform(X), columns=p.get_feature_names(X.columns))
+
+    model = LinearRegression(fit_intercept=False)
+
+    return pd.DataFrame(dict(x=df.x,
+                             y=df.y,
+                             z=df.z,
+                             vx=(df.vx - model.fit(X, df.vx).predict(X)).values,
+                             vy=(df.vy - model.fit(X, df.vy).predict(X)).values,
+                             vz=(df.vz - model.fit(X, df.vz).predict(X)).values))
+
+
+def read_gaia_with_rv_cubic_residuals():
+    df = read_gaia_with_rv_cartesian()
+
+    X = df[['x', 'y', 'z']]
+
+    model = linear_model.LinearRegression()
+
+    return pd.DataFrame(dict(x=df.x,
+                             y=df.y,
+                             z=df.z,
+                             vx=(df.vx - model.fit(X, df.vx).predict(X)).values,
+                             vy=(df.vy - model.fit(X, df.vy).predict(X)).values,
+                             vz=(df.vz - model.fit(X, df.vz).predict(X)).values))
 
 # VectorPlot[{-0.67 * x^2 + 2.30 * x * y, -1.79 * x^2 + -1.83 * y^2 }, {x, -3, 3}, {y, -3, 3}]
 

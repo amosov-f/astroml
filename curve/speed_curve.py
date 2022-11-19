@@ -11,8 +11,8 @@ def main():
     # return
     df = read_gaia_with_rv_xyz()
 
-    min_x = -10000
-    max_x = -5000
+    min_x = -16000
+    max_x = 0
     bin_size = 200
     bins_x = np.linspace(min_x, max_x, ((max_x - min_x) // bin_size) + 1)
     min_y = - (max_x - min_x) // 2
@@ -20,12 +20,12 @@ def main():
     bins_y = np.linspace(min_y, max_y, ((max_y - min_y) // bin_size) + 1)
 
     x_means, x_edge, y_edge, binnumber = stats.binned_statistic_2d(df.x, df.y, df.vx, statistic='median', bins=(bins_x, bins_y))
-    x_std, x_edge, y_edge, binnumber = stats.binned_statistic_2d(df.x, df.y, df.vx, statistic='std', bins=(bins_x, bins_y))
+    # x_std, x_edge, y_edge, binnumber = stats.binned_statistic_2d(df.x, df.y, df.vx, statistic='std', bins=(bins_x, bins_y))
     y_means, _, _, _ = stats.binned_statistic_2d(df.x, df.y, df.vy, statistic='median', bins=(bins_x, bins_y))
-    y_std, x_edge, y_edge, binnumber = stats.binned_statistic_2d(df.x, df.y, df.vy, statistic='std', bins=(bins_x, bins_y))
+    # y_std, x_edge, y_edge, binnumber = stats.binned_statistic_2d(df.x, df.y, df.vy, statistic='std', bins=(bins_x, bins_y))
     z_means, _, _, _ = stats.binned_statistic_2d(df.x, df.y, df.vz, statistic='median', bins=(bins_x, bins_y))
-    z_std, x_edge, y_edge, binnumber = stats.binned_statistic_2d(df.x, df.y, df.vz, statistic='std', bins=(bins_x, bins_y))
-    count, _, _, _ = stats.binned_statistic_2d(df.x, df.y, df.vz, statistic='count', bins=(bins_x, bins_y))
+    # z_std, x_edge, y_edge, binnumber = stats.binned_statistic_2d(df.x, df.y, df.vz, statistic='std', bins=(bins_x, bins_y))
+    # count, _, _, _ = stats.binned_statistic_2d(df.x, df.y, df.vz, statistic='count', bins=(bins_x, bins_y))
 
     C = z_means
 
@@ -50,12 +50,12 @@ def main():
     np.savetxt('x_points.tsv', x_averages, fmt='%1.0f', delimiter=',')
     np.savetxt('y_points.tsv', y_averages, fmt='%1.0f', delimiter=',')
     np.savetxt('vx_median.tsv', x_means, fmt='%1.3f', delimiter=',')
-    np.savetxt('vx_std.tsv', x_std, fmt='%1.3f', delimiter=',')
+    # np.savetxt('vx_std.tsv', x_std, fmt='%1.3f', delimiter=',')
     np.savetxt('vy_median.tsv', y_means, fmt='%1.3f', delimiter=',')
-    np.savetxt('vy_std.tsv', y_std, fmt='%1.3f', delimiter=',')
+    # np.savetxt('vy_std.tsv', y_std, fmt='%1.3f', delimiter=',')
     np.savetxt('vz_median.tsv', z_means, fmt='%1.3f', delimiter=',')
-    np.savetxt('vz_std.tsv', z_std, fmt='%1.3f', delimiter=',')
-    np.savetxt('count.tsv', count, fmt='%1.0f', delimiter=',')
+    # np.savetxt('vz_std.tsv', z_std, fmt='%1.3f', delimiter=',')
+    # np.savetxt('count.tsv', count, fmt='%1.0f', delimiter=',')
 
     ax.quiver(X, Y, x_means, y_means, C, width=0.003)
 

@@ -9,14 +9,10 @@ from curve.sistematic3d import show_velocity
 
 
 def main():
-    # df = read_gaia_with_rv_cartesian()
+    df = read_gaia_with_rv_cartesian()
 
-    # X1 = df[['x', 'y', 'z']]
+    X1 = df[['x', 'y', 'z']]
 
-    # model = linear_model.LinearRegression()
-    # # linear_vx = (df.vx - model.fit(X1, df.vx).predict(X1)).values
-    # # linear_vy = (df.vy - model.fit(X1, df.vy).predict(X1)).values
-    # # linear_vz = (df.vz - model.fit(X1, df.vz).predict(X1)).values
     #
     # linear_vx = model.fit(X1, df.vx).predict(X1)
     # linear_vy = model.fit(X1, df.vy).predict(X1)
@@ -25,17 +21,11 @@ def main():
     # print(df.x)
     #
     # c = Galactic(u=df.x * u.kpc, v=df.y * u.kpc, w=df.z * u.kpc, representation_type="cartesian", U=linear_vx * u.km/u.s, V=linear_vy * u.km/u.s,  W=linear_vz * u.km/u.s)
-    c = read_radec()
-    g = c.transform_to(Galactocentric)
 
-    df = to_cartesian(g)
-
-    X1 = df[['x', 'y', 'z']]
-
-    p = PolynomialFeatures(degree=2).fit(X1)
+    p = PolynomialFeatures(degree=1).fit(X1)
     # print(p.get_feature_names(X.columns))
 
-    X = pd.DataFrame(p.transform(X1), columns=p.get_feature_names(X1.columns))
+    X = X1 # pd.DataFrame(p.transform(X1), columns=p.get_feature_names(X1.columns))
 
     precision = 0.01
 
@@ -47,12 +37,13 @@ def main():
     for vname, y in [('vx', df.vx), ('vy', df.vy), ('vz', df.vz)]:
         model = linear_model.Lasso(alpha=alpha, fit_intercept=False)
     # model = make_pipeline(PolynomialFeatures(degree=1), LinearRegression(fit_intercept=False))
-    #     model = LinearRegression(fit_intercept=False)
+        model = LinearRegression(fit_intercept=True)
         model.fit(X, y)
+
+        print(model)
 
         y_pred = model.predict(X)
         diff = y - y_pred
-
 
 
         # model.coef_[]

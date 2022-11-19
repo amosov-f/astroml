@@ -71,6 +71,11 @@ def slices(func, dataset, imax=6000000, step=400000, slice=400000, prepare=False
     return average_dists
 
 
+def read_gaia_dr3_with_rv_with_errors():
+    file_dir = Path(__file__).parent
+    return pd.read_csv(file_dir.joinpath('not_filtered_with_error.csv'), sep=',')
+
+
 def read_raw_gaia_with_rv_no_errors():
     file_dir = Path(__file__).parent
     path = 'gdr3_short_sample.csv' if SAMPLE else 'full.tsv' if GDR2 else 'gdr3_short_notnull.csv'
@@ -100,7 +105,8 @@ def read_gaia_with_rv_full():
 def read_gaia_with_rv_xyz():
     df = read_raw_gaia_with_rv_no_errors()
     # df = df.iloc[0:10]
-    df = df[(df.parallax > 0)]
+    df = df[(df.parallax > 1.0 / 8)]
+    df = df.sample(10000000)
     c = SkyCoord(ra=df.ra.values * u.deg,
                  dec=df.dec.values * u.deg,
                  pm_ra_cosdec=df.pmra.values * u.mas / u.yr,
@@ -108,9 +114,9 @@ def read_gaia_with_rv_xyz():
                  radial_velocity=df.radial_velocity.values * u.km / u.s,
                  distance=Distance(parallax=df.parallax.values * u.mas))
     g = c.transform_to(Galactocentric)
-    return pd.DataFrame(dict(x=np.array(g.cartesian.x),
-                             y=np.array(g.cartesian.y),
-                             z=np.array(g.cartesian.z),
-                             vx=np.array(g.velocity.d_x),
-                             vy=np.array(g.velocity.d_y),
-                             vz=np.array(g.velocity.d_z)))
+    return pd.DataFrame(dict(x=g.cartesian.x.value,
+                             y=g.cartesian.y.value,
+                             z=g.cartesian.z.value,
+                             vx=g.velocity.d_x.value,
+                             vy=g.velocity.d_y.value,
+                             vz=g.velocity.d_z.value))
