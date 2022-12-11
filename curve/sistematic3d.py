@@ -46,7 +46,7 @@ def read_gaia_with_rv_redisuals_xyz():
                              vy=np.array(c.velocity.d_y),
                              vz=np.array(c.velocity.d_z)))
 
-def show_velocity(df, title, subtitle, order, min_x, max_x, min_y, max_y, min_z, max_z, bin_count):
+def show_velocity(df, title, subtitle, r, min_x, max_x, min_y, max_y, min_z, max_z, bin_count):
     bins_x = np.linspace(min_x, max_x, bin_count + 1)
     bins_y = np.linspace(min_y, max_y, bin_count + 1)
 
@@ -79,7 +79,7 @@ def show_velocity(df, title, subtitle, order, min_x, max_x, min_y, max_y, min_z,
     y_averages = (y_edge[:-1] + y_edge[1:]) / 2
 
 
-    X, Y = np.meshgrid(x_averages, y_averages)
+    X, Y = np.meshgrid(x_averages, y_averages, indexing='ij')
 
     fig, ax = plt.subplots()
 
@@ -98,7 +98,7 @@ def show_velocity(df, title, subtitle, order, min_x, max_x, min_y, max_y, min_z,
     # np.savetxt('vz_std.tsv', z_std, fmt='%1.3f', delimiter=',')
     # np.savetxt('count.tsv', count, fmt='%1.0f', delimiter=',')
 
-    ax.quiver(X, Y, x_means, y_means, C, width=0.003)
+    ax.quiver(X, Y, x_means, y_means, C, angles='xy', scale_units='xy', scale=200 / (r ** 0.5))
 
     width_x = 10
 
@@ -113,7 +113,7 @@ def show_velocity(df, title, subtitle, order, min_x, max_x, min_y, max_y, min_z,
     dir = f'fig/{title}'
     Path(dir).mkdir(parents=True, exist_ok=True)
 
-    path = f'{dir}/{order}_{subtitle}.png'
+    path = f'{dir}/{r}_{subtitle}.png'
     fig.savefig(path)
 
     plt.show()

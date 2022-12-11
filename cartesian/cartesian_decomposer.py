@@ -3,6 +3,7 @@ from astropy.coordinates import CartesianRepresentation
 from sklearn import linear_model
 from sklearn.linear_model import LinearRegression
 from sklearn.preprocessing import PolynomialFeatures
+import statsmodels.api as sm
 
 from cartesian.common_cartesian import *
 from curve.sistematic3d import show_velocity
@@ -22,10 +23,10 @@ def main():
     #
     # c = Galactic(u=df.x * u.kpc, v=df.y * u.kpc, w=df.z * u.kpc, representation_type="cartesian", U=linear_vx * u.km/u.s, V=linear_vy * u.km/u.s,  W=linear_vz * u.km/u.s)
 
-    p = PolynomialFeatures(degree=1).fit(X1)
+    p = PolynomialFeatures(degree=2).fit(X1)
     # print(p.get_feature_names(X.columns))
 
-    X = X1 # pd.DataFrame(p.transform(X1), columns=p.get_feature_names(X1.columns))
+    X = pd.DataFrame(p.transform(X1), columns=p.get_feature_names(X1.columns))
 
     precision = 0.01
 
@@ -34,33 +35,101 @@ def main():
 
     print(X.columns)
 
+    models = []
+
     for vname, y in [('vx', df.vx), ('vy', df.vy), ('vz', df.vz)]:
-        model = linear_model.Lasso(alpha=alpha, fit_intercept=False)
-    # model = make_pipeline(PolynomialFeatures(degree=1), LinearRegression(fit_intercept=False))
-        model = LinearRegression(fit_intercept=True)
-        model.fit(X, y)
+        # model = linear_model.Lasso(alpha=alpha, fit_intercept=False)
+        # model = make_pipeline(PolynomialFeatures(degree=1), LinearRegression(fit_intercept=False))
+        # model = LinearRegression(fit_intercept=False)
+        # model.fit(X, y)
 
-        print(model)
+        # y_pred = model.predict(X)
+        # diff = y - y_pred
+        #
 
-        y_pred = model.predict(X)
-        diff = y - y_pred
+        ols = sm.OLS(y, X)
+        res = ols.fit()
 
+        # print(res.summary())
+
+        models.append(res)
 
         # model.coef_[]
 
         print(vname + ' = ', end='\t')
-        for i, col in enumerate(X.columns.values):
-            if abs(model.coef_[i]) > precision:
-                print(f'+ {model.coef_[i]:.2f} * {col}', end='\t')
+        # for i, col in enumerate(X.columns.values):
+        #     if abs(model.coef_[i]) > precision:
+        #         print(f'+ {model.coef_[i]:.2f} * {col}', end='\t')
+        for i in range(len(res.params)):
+            val = res.params[i]
+            err = res.bse[i]
+            col = res.params.keys()[i]
+            print(f'+ {val:.2f} * {col}', end='\t')
+
+        print()
+
+        print(vname, end='\t')
+        for i in range(len(res.params)):
+            val = res.params[i]
+            err = res.bse[i]
+            col = res.params.keys()[i]
+            print(f'\t{val:.3f}±{err:.3f} * {col}', end=',')
+
+        print()
+
+    vx = models[0]
+    vy = models[1]
+    vz = models[2]
+
+    U = -vx.params[0]
+    dU = vx.bse[0]
+    V = -vy.params[0]
+    dV = vy.bse[0]
+    W = -vz.params[0]
+    dW = vz.bse[0]
+
+    M11 = vx.params[1]
+    dM11 = vx.bse[1]
+    M22 = vy.params[2]
+    dM22 = vy.bse[2]
+    M33 = vz.params[3]
+    dM33 = vz.bse[3]
+
+    w1 = (- vx.params[2] + vy.params[1]) / 2
+    dw1 = sigma(vx.bse[2], vy.bse[1]) / 2
+    w2 = (vx.params[3] - vz.params[1]) / 2
+    dw2 = sigma(vx.bse[3], vz.bse[1]) / 2
+    w3 = (- vy.params[3] + vz.params[2]) / 2
+    dw3 = sigma(vy.bse[3], vz.bse[2]) / 2
+
+    print()
+
+    print(f'w1={w1:.3f}±{dw1:.3f}')
+    print(f'w2={w2:.3f}±{dw2:.3f}')
+    print(f'w3={w3:.3f}±{dw3:.3f}')
+
+    M12 = (vx.params[2] + vy.params[1]) / 2
+    dM12 = sigma(vx.bse[2], vy.bse[1]) / 2
+    M13 = (vx.params[3] + vz.params[1]) / 2
+    dM13 = sigma(vx.bse[3], vz.bse[1]) / 2
+    M23 = (vy.params[3] + vz.params[2]) / 2
+    dM23 = sigma(vy.bse[3], vz.bse[2]) / 2
+
+    print()
+
+    print(f'M12={M12:.3f}±{dM12:.3f}')
+    print(f'M13={M13:.3f}±{dM13:.3f}')
+    print(f'M23={M23:.3f}±{dM23:.3f}')
 
     # print(model.score(X, y))
-        print()
 
     print()
 
     # compute_decomposition()
 
 
+def sigma(err1, err2):
+    return (err1 ** 2 + err2 ** 2) ** 0.5
 
 def compute_decomposition():
     # for i, z in enumerate([-1.5, -1, -0.5, 0, 0.5, 1, 1.5]):
