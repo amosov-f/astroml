@@ -21,13 +21,15 @@ def main():
 
     y2 = -21.644 -4.774*x -1.811*x**2
 
-    # y3 = -21.31 -1.38 * x ** 2
+    y3 = -20.51 -4.45 * x	+ -1.90 * x**2
 
     plt.stairs(bin_means, bin_edges, baseline=None, label='Усредненные значения vy звезд')
 
     plt.plot(x, y, label='Модель Огордникова-Милна (табл. 1, 2)', linestyle='dashed')
 
     plt.plot(x, y2, label='Квадратичная модель (табл. 5)', linestyle='dashdot')
+
+    plt.plot(x, y3, label='Упрощенная квадратичная модель (табл. 6)', linestyle='dashdot')
 
     plt.legend()
 

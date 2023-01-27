@@ -9,6 +9,35 @@ from cartesian.common_cartesian import *
 from curve.sistematic3d import show_velocity
 
 
+def compute_full_quadric_decomposition_lasso():
+    df = read_gaia_with_rv_cartesian()
+
+    X1 = df[['x', 'y', 'z']]
+
+    p = PolynomialFeatures(degree=2).fit(X1)
+
+    X = pd.DataFrame(p.transform(X1), columns=p.get_feature_names(X1.columns))
+
+    alpha = 5
+
+    f = linear_model.Lasso
+    print(f)
+    print(alpha)
+
+    print(X.columns)
+
+    for vname, y in [('vx', df.vx), ('vy', df.vy), ('vz', df.vz)]:
+        model = f(alpha=alpha, fit_intercept=False)
+
+        model.fit(X, y)
+
+        print(vname + ' = ', end='\t')
+        for i, col in enumerate(X.columns.values):
+            if abs(model.coef_[i]) > 0:
+                print(f'+ {model.coef_[i]:.2f} * {col}', end='\t')
+
+        print()
+
 def main():
     df = read_gaia_with_rv_cartesian()
 
@@ -95,12 +124,12 @@ def main():
     M33 = vz.params[3]
     dM33 = vz.bse[3]
 
-    w1 = (- vx.params[2] + vy.params[1]) / 2
-    dw1 = sigma(vx.bse[2], vy.bse[1]) / 2
+    w1 = (- vy.params[3] + vz.params[2]) / 2
+    dw1 = sigma(vy.bse[3], vz.bse[2]) / 2
     w2 = (vx.params[3] - vz.params[1]) / 2
     dw2 = sigma(vx.bse[3], vz.bse[1]) / 2
-    w3 = (- vy.params[3] + vz.params[2]) / 2
-    dw3 = sigma(vy.bse[3], vz.bse[2]) / 2
+    w3 = (- vx.params[2] + vy.params[1]) / 2
+    dw3 = sigma(vx.bse[2], vy.bse[1]) / 2
 
     print()
 
@@ -269,5 +298,6 @@ if __name__ == '__main__':
     # print(Y)
     # print('Z')
     # print(Z)
-    main()
+    # main()
+    compute_full_quadric_decomposition_lasso()
     # compute_decomposition()
