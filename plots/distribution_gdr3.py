@@ -6,6 +6,9 @@ from common.gaia.with_rv import read_gaia_dr3_with_rv_with_errors
 
 def main():
     df = read_gaia_dr3_with_rv_with_errors()
+    #
+    # print(df[(df.parallax_error < 1)].shape[0] / df.shape[0])
+    # print(df[(abs(df.parallax_error / df.parallax) < 0.1)].shape[0] / df.shape[0])
 
     px = 1 / df['parallax']
     plt.hist(px, bins=100, range=(0, 15))
@@ -59,6 +62,24 @@ def main():
     plt.ylabel('Число звезд')
     plt.title('Распределение относительной точности собственного движения\nзвезд GAIA DR3 with RV (прямое восхождение)')
     plt.savefig('dr3_with_rv/pmra_error_sigma.png')
+
+    plt.clf()
+
+    px_error = (df['pmra_error'] ** 2 + df['pmdec_error'] ** 2) ** 0.5
+    plt.hist(px_error, bins=100, range=(0, 3))
+    plt.xlabel('Точность собственных движений, mas')
+    plt.ylabel('Число звезд')
+    plt.title('Распределение точности полного собственного движения\nзвезд GAIA DR3 with RV')
+    plt.savefig('dr3_with_rv/pmra_pmdec_error.png')
+
+    plt.clf()
+
+    px_error = 100 * ((df['pmra_error'] ** 2 + df['pmdec_error'] ** 2) ** 0.5) / ((df['pmra'] ** 2 + df['pmdec'] ** 2) ** 0.5)
+    plt.hist(px_error, bins=100, range=(0, 100))
+    plt.xlabel('Относительная точность собственных движений, %')
+    plt.ylabel('Число звезд')
+    plt.title('Распределение относительной точности полного собственного движения\nзвезд GAIA DR3 with RV')
+    plt.savefig('dr3_with_rv/pmra_pmdec_error_sigma.png')
 
     plt.clf()
 

@@ -49,6 +49,7 @@ def read_gaia_with_rv_redisuals_xyz():
 def show_velocity(df, title, subtitle, r, min_x, max_x, min_y, max_y, min_z, max_z, bin_count):
     bins_x = np.linspace(min_x, max_x, bin_count + 1)
     bins_y = np.linspace(min_y, max_y, bin_count + 1)
+    bins_z = np.linspace(min_z, max_z, bin_count + 1)
 
     df = df[(df.x >= min_x) & (df.x <= max_x) & (df.y >= min_y) & (df.y <= max_y) & (df.z >= min_z) & (df.z <= max_z)]
 
@@ -56,30 +57,33 @@ def show_velocity(df, title, subtitle, r, min_x, max_x, min_y, max_y, min_z, max
 
     x_col = df.x
     y_col = df.y
+    z_col = df.z
 
-    x_means, x_edge, y_edge, binnumber = stats.binned_statistic_2d(x_col, y_col, df.vx, statistic='mean',
-                                                                   bins=(bins_x, bins_y))
+    x_means, x_edge, y_edge, binnumber = stats.binned_statistic_2d(y_col, z_col, df.vx, statistic='mean',
+                                                                   bins=(bins_y, bins_z))
 
     print("x done")
     # x_std, x_edge, y_edge, binnumber = stats.binned_statistic_2d(x_col, y_col, df.vx, statistic='std',
     #                                                              bins=(bins_x, bins_y))
-    y_means, _, _, _ = stats.binned_statistic_2d(x_col, y_col, df.vy, statistic='mean', bins=(bins_x, bins_y))
+    y_means, y_edge, z_edge, _ = stats.binned_statistic_2d(y_col, z_col, df.vy, statistic='mean', bins=(bins_y, bins_z))
     # y_std, x_edge, y_edge, binnumber = stats.binned_statistic_2d(x_col, y_col, df.vy, statistic='std',
     #                                                              bins=(bins_x, bins_y))
     print("y done")
-    z_means, _, _, _ = stats.binned_statistic_2d(x_col, y_col, df.vz, statistic='mean', bins=(bins_x, bins_y))
+    z_means, _, _, _ = stats.binned_statistic_2d(y_col, z_col, df.vz, statistic='mean', bins=(bins_y, bins_z))
     # z_std, x_edge, y_edge, binnumber = stats.binned_statistic_2d(x_col, y_col, df.vz, statistic='std',
     #                                                              bins=(bins_x, bins_y))
     print("z done")
     # count, _, _, _ = stats.binned_statistic_2d(x_col, y_col, df.vz, statistic='count', bins=(bins_x, bins_y))
 
-    C = z_means
+    C = x_means
 
     x_averages = (x_edge[:-1] + x_edge[1:]) / 2
     y_averages = (y_edge[:-1] + y_edge[1:]) / 2
+    z_averages = (z_edge[:-1] + z_edge[1:]) / 2
 
 
-    X, Y = np.meshgrid(x_averages, y_averages, indexing='ij')
+    # X, Y = np.meshgrid(x_averages, y_averages, indexing='ij')
+    Y, Z = np.meshgrid(y_averages, z_averages, indexing='ij')
 
     fig, ax = plt.subplots()
 
@@ -98,17 +102,18 @@ def show_velocity(df, title, subtitle, r, min_x, max_x, min_y, max_y, min_z, max
     # np.savetxt('vz_std.tsv', z_std, fmt='%1.3f', delimiter=',')
     # np.savetxt('count.tsv', count, fmt='%1.0f', delimiter=',')
 
-    ax.quiver(X, Y, x_means, y_means, C, angles='xy', scale_units='xy', scale=200 / (r ** 0.5))
+    # ax.quiver(X, Y, x_means, y_means, C, angles='xy', scale_units='xy', scale=200 / (r ** 0.5))
+    ax.quiver(Y, Z, y_means, z_means, C, angles='xy', scale_units='xy', scale=200 / (r ** 0.5))
 
     width_x = 10
 
-    fig.suptitle(title + '\n' + subtitle, fontsize=30)
+    fig.suptitle(title + '\n' + subtitle)
 
-    fig.set_figwidth(width_x)  # ширина и
-    fig.set_figheight(width_x * (max_y - min_y) // (max_x - min_x))  # высота "Figure"
+    # fig.set_figwidth(width_x)  # ширина и
+    # fig.set_figheight(width_x * (max_z - min_z) // (max_y - min_y))  # высота "Figure"
 
-    plt.xlabel('X, кпк')
-    plt.ylabel('Y, кпк')
+    plt.xlabel('Y, кпк')
+    plt.ylabel('Z, кпк')
 
     dir = f'fig/{title}'
     Path(dir).mkdir(parents=True, exist_ok=True)

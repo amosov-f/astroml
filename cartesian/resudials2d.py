@@ -11,13 +11,13 @@ def show_velocity2d():
 
             print(df)
 
-            min_x = -r
-            max_x = r
+            min_x = -0.1
+            max_x = 0.1
             min_y = -r
             max_y = r
-            min_z = -0.1
-            max_z = 0.1
-            show_velocity(df, f"Остаточные скорости", title + f" до {r} кпк", r,
+            min_z = -2
+            max_z = 2
+            show_velocity(df, f"Остаточные скорости Vy по z", title + f" до {r} кпк", r,
                           min_x=min_x,
                           max_x=max_x,
                           min_y=min_y,
@@ -92,5 +92,5 @@ def show_table(degree, r):
 
 
 if __name__ == '__main__':
-    # show_velocity2d()
-    show_velocity_table()
+    show_velocity2d()
+    # show_velocity_table()
