@@ -57,11 +57,11 @@ def compute_coeffs(df, compute_equations):
 def decompose(dataset, compute_equations, imax, step, slice, sort_lines, filter=None):
     dists = []
     coefs = {}
-    # errors = {}
+    errors = {}
 
-    def pizza(df):
-        m_dist = distance(df.iloc[len(df) // 2]) / 1000
-        dists.append(m_dist)
+    def pizza(df, l_dist, r_dist):
+        # m_dist = distance(df.iloc[len(df) // 2]) / 1000
+        dists.append((int(l_dist), int(r_dist)))
 
         _, res, _ = compute_coeffs(df, compute_equations)
 
@@ -109,22 +109,31 @@ def decompose(dataset, compute_equations, imax, step, slice, sort_lines, filter=
                 coefs[key] = []
             coefs[key].append(val)
 
-        # for key, err in cur_errors.items():
-        #     if key not in errors:
-        #         errors[key] = []
-        #     errors[key].append(err)
+        for key, err in cur_errors.items():
+            if key not in errors:
+                errors[key] = []
+            errors[key].append(err)
 
             # print(f'{key}={val}±{err}')
 
     average_dists = slices(pizza, dataset, imax, step, slice, filter=filter)
 
-    print('\t' + '\t\t'.join(average_dists))
+    print('\t' + '\t'.join([f'{d[0]}-{d[1]}' for d in dists]))
+    for figure in sort_lines:
+        for label in figure:
+            if label in coefs:
+                print(label, end='\t')
+                for val, err in zip(coefs[label], errors[label]):
+                    print(f'{val:.1f}±{err:.1f}', end='\t')
+                print()
+
+    print('\t' + '\t'.join([f'{d[0]}-{d[1]}' for d in dists]))
     for figure in sort_lines:
         for label in figure:
             if label in coefs:
                 print(label, end='\t')
                 for val in coefs[label]:
-                    print('{0:.1f}'.format(val).replace('.', ','), end='\t')
+                    print(f'{val:.1f}'.replace('.', ','), end='\t')
                 print()
 
     return coefs, average_dists

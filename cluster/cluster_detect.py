@@ -6,7 +6,7 @@ import pandas
 from astropy import units as u
 from astropy.coordinates import SkyCoord, Distance
 
-from common.gaia.with_rv import read_gaia_with_rv_1500
+from common.gaia.with_rv import read_gaia_with_rv_1500, read_gaia_with_rv_full
 from common.linear_decomposer import compute_coeffs
 from rv.count.distribution import draw_distribution
 from scripts.ogorod_fg import ogorod_fg_vr, K, compute_mu
@@ -34,7 +34,7 @@ def compute_absolute(gaia_with_rv):
     return pandas.DataFrame(dict(l=gaia_with_rv.l, b=gaia_with_rv.b, vb=vb, vl=vl, v=v, dist=numpy.array(c.distance)))
 
 def main():
-    gaia_with_rv = read_gaia_with_rv_1500()
+    gaia_with_rv = read_gaia_with_rv_full()
     print(gaia_with_rv)
 
     print(np.min(gaia_with_rv.parallax))

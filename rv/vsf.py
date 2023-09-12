@@ -6,10 +6,10 @@ import statsmodels.api as sm
 from common.gaia.with_rv import read_gaia_with_rv_full, SAMPLE, GDR2
 from common.gaia.with_rv import slices
 from common.pandas2 import split
-from common.spherical import taj, saj, tdj, sdj
+from common.spherical import taj, saj, tdj, sdj, indexes
 from common.spherical_decomposer import decompose_spherical
 
-N = 10
+N = 24
 KK = 4.738
 
 def mul_apply(df):
@@ -46,9 +46,9 @@ def to_map(model):
         result[key] = (val, err)
     return result
 
-STEP = 400000 if GDR2 else 20000 if SAMPLE else 2000000
+STEP = 2000000
 SLICE = STEP
-MAX = 6000000 if GDR2 else 300000 if SAMPLE else 30000000
+MAX = STEP * 15
 
 def main():
     start = time.time()
@@ -63,6 +63,8 @@ def main():
     coefs = {}
     errors = {}
     distances = []
+    l_dists = []
+    r_dists = []
 
     table = {}
 
@@ -76,13 +78,13 @@ def main():
     s310 = []
     v310 = []
 
-    def f(slice, _, dist_r):
+    def f(slice, dist_l, dist_r):
         X, y = prepare_ols(slice)
         # X2, y2 = prepare_mu_vr(slice)
         r = 1 / slice['px']
 
         slice.y = slice['radial_velocity'] / r
-        rv_model = decompose_spherical(slice, 11)
+        rv_model = decompose_spherical(slice, 25)
         # coeffs, errors = show_spherical_decomposition(model, draw=False)
 
 
@@ -98,6 +100,8 @@ def main():
         rv = to_map(rv_model)
 
         distances.append(dist_r)
+        l_dists.append(dist_l)
+        r_dists.append(dist_r)
 
         t211.append(f'{vsf["t_6"][0]:.1f}')
         s310.append(f'{vsf["s_10"][0]:.1f}')
@@ -183,17 +187,23 @@ def main():
             print(f'{val:.1f}'.replace('.', ','), end='\t')
         print()
 
-    print(end='\t')
-    for d in distances:
+    print('min', end='\t')
+    for d in l_dists:
+        print(int(d), end='\t')
+    print()
+    print('max', end='\t')
+    for d in r_dists:
         print(int(d), end='\t')
     print()
     keys = list(coefs.keys())
     keys = keys[0:2 * len(keys) // 3:2] + keys[1:2 * len(keys) // 3:2] + keys[2 * len(keys) // 3:len(keys)]
-    for k in keys:
-        print(f'{k}', end='\t')
+    for key in keys:
+        j = int(key[2:])
+        n, k, l = indexes(j)
+        print(f'{key[0:2]}{n}{k}{l}', end='\t')
         # for val, err in zip(coefs[k], errors[k]):
         #     print(f'{val:.1f}\t{err:.1f}'.replace('.', ','), end='\t')
-        for val in coefs[k]:
+        for val in coefs[key]:
             print(f'{val:.1f}'.replace('.', ','), end='\t')
         print()
 

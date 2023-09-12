@@ -3,10 +3,10 @@ numpy
 pandas
 healpy
 statsmodels
-sklearn
 astroquery
 healpy
 statsmodels
-sklearn
+scikit-learn
 astroquery
 wheel
+matplotlib

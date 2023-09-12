@@ -1,0 +1,11 @@
+t_211 = 0.37 * (-dM11/dy + dM12/dx - dM23/dz + dM33/dy + 3 (dwx/dz + dwz/dx) ) =
+0.37 * (-dM11/dy + bxx - dM23/dz + dM33/dy + 3dwx/dz + 2dwz/dx) =
+0.37 * (-dM11/dy + bxx -bzz + dM33/dy + 2dwx/dz + 2dwz/dx) =
+0.37 * (-(axy-bxx+dwzdx) + bxx -bzz + dM33/dy + 2dwx/dz + 2dwz/dx)=
+0.37 * (-axy +bxx -dwzdx + bxx -bzz + dM33/dy + 2dwx/dz + 2dwz/dx)=
+0.37 * (-axy +bxx + bxx -bzz + dM33/dy + 2dwx/dz)=
+0.37 * (-axy +bxx + bxx -bzz + (cyz-bzz-2dwx/dz) + 2dwx/dz)=
+0.37 * (-axy +bxx + bxx -bzz + cyz-bzz )=
+0.37 * (-axy +2bxx -2bzz + cyz )=
+0.37 * (-2.306 +2(-1.811) -2(-8.727) + 0.312 )=
+0.37 * (-2.306 +2(-1.811) -2(-8.727) + 0.312 )=

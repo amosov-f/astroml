@@ -10,10 +10,14 @@ from numpy import radians, average
 from common.astro import galaxy, galaxy_mu
 
 
-def to_galaxy(df, with_pm_errors=True):
+def to_galaxy_no_errors(df):
     a, d, mua, mud, px = radians(df.ra), radians(df.dec), df.pmra, df.pmdec, df.parallax
     l, b = galaxy(a, d)
     mul, mub = galaxy_mu(mua, mud, l, b, d)
+    return l, b, mul, mub, px
+
+def to_galaxy(df, with_pm_errors=True):
+    l, b, mul, mub, px = to_galaxy_no_errors(df)
     if with_pm_errors:
         mul_error, mub_error = galaxy_mu(df.pmra_error, df.pmdec_error, l, b, d)
         return l, b, mul, mub, px, mul_error, mub_error
@@ -21,7 +25,7 @@ def to_galaxy(df, with_pm_errors=True):
 
 
 def prepare_no_error_galaxy_dataset(raw_dataset):
-    l, b, mul, mub, px = to_galaxy(raw_dataset, with_pm_errors=False)
+    l, b, mul, mub, px = to_galaxy_no_errors(raw_dataset)
     return pd.DataFrame(data={
         'l': l,
         'b': b,
@@ -99,7 +103,7 @@ GDR2 = False
 
 def read_gaia_with_rv_full():
     df = read_raw_gaia_with_rv_no_errors()
-    return prepare_galaxy_dataset(df, with_pm_errors=False)
+    return prepare_no_error_galaxy_dataset(df)
 
 
 def read_gaia_with_rv_xyz():

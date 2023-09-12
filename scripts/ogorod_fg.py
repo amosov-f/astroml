@@ -47,21 +47,24 @@ def ogorod_fg_mul(df):
 
     return pd.DataFrame(dict(U=sin(l) / r,
                              V=-cos(l) / r,
-                             # A=cos(b) * cos(2 * l),
-                             # B=cos(b),
-                             w1=-sin(b) * cos(l),
-                             w2=-sin(b) * sin(l),
-                             w3=+cos(b),
-                             # F=-r * cos(b) ** 2 * cos(l) ** 3,
-                             # G=-r * (3 * cos(b) ** 2 * cos(l) - cos(b) ** 2 * cos(l) ** 3),
+                             A=cos(b) * cos(2 * l),
+                             B=cos(b),
+                             # w1=-sin(b) * cos(l),
+                             # w2=-sin(b) * sin(l),
+                             # w3=+cos(b),
+                             F=-r * cos(b) ** 2 * cos(l) ** 3,
+                             G=-r * (3 * cos(b) ** 2 * cos(l) - cos(b) ** 2 * cos(l) ** 3),
                              # D=r * cos(b) ** 2 * cos(l) * cos(2 * l),
 
-                             M12=+cos(b) * cos(2 * l),
-                             M13=-sin(b) * sin(l),
-                             M23=+sin(b) * cos(l),
-                             M11=-0.5 * cos(b) * sin(2 * l),
-                             M22=+0.5 * cos(b) * sin(2 * l),
-                             M33=0.0,
+                             # M12=+cos(b) * cos(2 * l),
+                             # M13=-sin(b) * sin(l),
+                             # M23=+sin(b) * cos(l),
+                             # M11=-0.5 * cos(b) * sin(2 * l),
+                             # M22=+0.5 * cos(b) * sin(2 * l),
+                             # M33=0.0,
+
+                             # C=-cos(b) * sin(2 * l),
+                             # K=0.0,
 
                              # t211=ct211 * cos(2 * b) * cos(l),
                              # s310=cs310 * (-(5 * sin(b) ** 2 - 1) * cos(l)),
@@ -132,21 +135,24 @@ def ogorod_fg_mub(df):
     return pd.DataFrame(dict(U=cos(l) * sin(b) / r,
                              V=sin(l) * sin(b) / r,
                              W=-cos(b) / r,
-                             # A=-cos(b) * sin(b) * sin(2 * l),
-                             w1=sin(l),
-                             w2=-cos(l),
-                             w3=0,#cos(l),  # 0?, # TODO!!!
-                             # F=r * cos(b) ** 2 * sin(b) * sin(l) * cos(l) ** 2,
-                             # G=r * cos(b) ** 2 * sin(b) * sin(l) ** 3,
-                             # K=-cos(b) * sin(b),
+                             A=-cos(b) * sin(b) * sin(2 * l),
+                             # w1=sin(l),
+                             # w2=-cos(l),
+                             # w3=0,#cos(l),  # 0?, # TODO!!!
+                             F=r * cos(b) ** 2 * sin(b) * sin(l) * cos(l) ** 2,
+                             G=r * cos(b) ** 2 * sin(b) * sin(l) ** 3,
+                             K=-cos(b) * sin(b),
                              # D=- 0.5 * r * cos(b) * sin(2 * b) * cos(l) * cos(2 * l),
 
-                             M12=-0.5 * sin(2 * b) * sin(2 * l),
-                             M13=+cos(2 * b) * cos(l),
-                             M23=+cos(2 * b) * sin(l),
-                             M11=-0.5 * sin(2 * b) * cos(l) ** 2,
-                             M22=-0.5 * sin(2 * b) * sin(l) ** 2,
-                             M33=+0.5 * sin(2 * b),
+                             # M12=-0.5 * sin(2 * b) * sin(2 * l),
+                             # M13=+cos(2 * b) * cos(l),
+                             # M23=+cos(2 * b) * sin(l),
+                             # M11=-0.5 * sin(2 * b) * cos(l) ** 2,
+                             # M22=-0.5 * sin(2 * b) * sin(l) ** 2,
+                             # M33=+0.5 * sin(2 * b),
+
+                             # C=-0.5 * sin(2 * b) * cos(2 * l),
+                             # K=-0.5 * sin(2 * b),
 
                              # t211=ct211 * sin(b) * sin(l),
                              # s310=cs310 * ((15 * sin(b) ** 2 - 11) * sin(b) * sin(l)),
@@ -202,18 +208,18 @@ def ogorod_fg_vr(df):
     return pd.DataFrame(dict(U=-cos(b) * cos(l) / r,
                              V=-cos(b) * sin(l) / r,
                              W=-sin(b) / r,
-                             # A=cos(b) ** 2 * sin(2 * l),
-                             # F=-r * cos(b) ** 3 * sin(l) * cos(l) ** 2 * r,
-                             # G=-r * cos(b) ** 3 * sin(l) ** 3 * r,
-                             # K=cos(b) ** 2 * r,
+                             A=cos(b) ** 2 * sin(2 * l),
+                             F=-r * cos(b) ** 3 * sin(l) * cos(l) ** 2 * r,
+                             G=-r * cos(b) ** 3 * sin(l) ** 3 * r,
+                             K=cos(b) ** 2 * r,
                              # D=2 * r * (cos(b) ** 3) * (cos(l) ** 2) * sin(l),
 
-                             M12=cos(b) ** 2 * sin(2 * l),
-                             M13=sin(2 * b) * cos(l),
-                             M23=sin(2 * b) * sin(l),
-                             M11=cos(b) ** 2 * cos(l) ** 2,
-                             M22=cos(b) ** 2 * sin(l) ** 2,
-                             M33=sin(b) ** 2,
+                             # M12=cos(b) ** 2 * sin(2 * l),
+                             # M13=sin(2 * b) * cos(l),
+                             # M23=sin(2 * b) * sin(l),
+                             # M11=cos(b) ** 2 * cos(l) ** 2,
+                             # M22=cos(b) ** 2 * sin(l) ** 2,
+                             # M33=sin(b) ** 2,
 
                              # v310=cv310 * (5 * sin(b) ** 2 - 1) * cos(b) * sin(l),
 
@@ -255,16 +261,15 @@ def compute_ogorod_fg(df):
     return pd.concat([mul, mub, vr])
     # return vr
 
-
 def compute_mu(df):
     mul = ogorod_fg_mul(df)
     mub = ogorod_fg_mub(df)
     return pd.concat([mul, mub])
 
 
-STEP = 400000
+STEP = 2000000
 SLICE = STEP
-MAX = 6000000
+MAX = STEP * 15
 
 
 def main():
@@ -273,8 +278,12 @@ def main():
     # df = df
     sort = [
         ['U', 'V', 'W'],
-        ['w1', 'w2', 'w3'],
-        ['M12', 'M13', 'M23', 'M11', 'M22', 'M33'],
+        ['A', 'B'],
+
+        # ['w1', 'w2', 'w3'],
+        # ['M12', 'M13', 'M23', 'M11', 'M22', 'M33'],
+        ['F', 'G', 'K'],
+
         ['dw1dr3', 'dw3dr1'],
         ['dM11dr2', 'dM12dr1', 'dM12dr2', 'dM22dr3', 'dM23dr2', 'dM33dr2', 'dM22dr2', 'dM23dr3'],
         ['t101', 's110', 't211', 's310', 'v310', 'dist']
@@ -282,7 +291,9 @@ def main():
         # ['F', 'G', 'K']
     ]
     # c = [[], [], [], []]
+    # decompose(dataset, ogorod_fg_vr, MAX, STEP, SLICE, sort)
     decompose(dataset, compute_ogorod_fg, MAX, STEP, SLICE, sort)
+    # decompose(dataset, compute_mu, MAX, STEP, SLICE, sort)
     # decompose(dataset, compute_ogorod_fg, MAX, STEP, SLICE, sort, filter=lambda df: np.abs(df.b) < math.radians(1))
     # c[0], average_dists = decompose(dataset, compute_ogorod_fg, MAX, STEP, SLICE, sort, filter=lambda df: (((0 < df.l) & (df.l < + math.pi / 4)) | ((7 * math.pi / 4 < df.l) & (df.l < 2 * math.pi))))
     # c[1], _ = decompose(dataset, compute_ogorod_fg, MAX, STEP, SLICE, sort, filter=lambda df: (+math.pi / 4 < df.l) & (df.l < 3 * math.pi / 4))

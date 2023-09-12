@@ -1,10 +1,8 @@
-import healpy as hp
 import matplotlib.pyplot as plt
 import statsmodels.api as sm
 from pandas import DataFrame
 
 from common import spherical
-from common.healpix import pixel_centers
 
 
 def decompose_spherical(df: DataFrame, ncoeff: int):
@@ -45,6 +43,9 @@ def show_spherical_decomposition(model, draw=True):
     return coeffs, errors
 
 def show_spherical_decomposition_on_sphere(model, title):
+    import healpy as hp
+    from common.healpix import pixel_centers
+
     nside = 8
     df = pixel_centers(nside)
     X = prepare_features(df, len(model.params))
