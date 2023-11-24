@@ -177,7 +177,7 @@ def main():
                 coefs[key] = []
             coefs[key].append(val)
 
-    slices(f, dataset, MAX, STEP, SLICE, prepare=False)
+    slices(f, dataset, MAX, MAX, MAX, prepare=False)
 
     keys = list(table.keys())
     # keys = keys[0:len(keys):2] + keys[1:len(keys):2]

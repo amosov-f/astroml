@@ -1,20 +1,24 @@
+from pathlib import Path
+
 import pandas as pd
 
-def main():
 
+def read_gdr3():
     result = []
 
     i = 0
     chunksize = 10 ** 5
-    for df in pd.read_csv('gdr3.csv', chunksize=chunksize):
+    for df in pd.read_csv(Path(__file__).parent.joinpath('gdr3.csv'), chunksize=chunksize):
         print(i)
-        df = df[['ra', 'dec', 'pmra', 'pmra_error', 'pmdec', 'pmdec_error', 'parallax', 'parallax_error', 'radial_velocity', 'radial_velocity_error']]
         result.append(df)
         i += 1
 
-    df = pd.concat(result)
+    return pd.concat(result)
 
-    df.to_csv('not_filtered_with_error.csv', index=False)
+
+def main():
+    df = read_gdr3()
+    df.to_csv('phot.csv', index=False)
 
 
 if __name__ == '__main__':

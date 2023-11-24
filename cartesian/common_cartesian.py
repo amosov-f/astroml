@@ -5,7 +5,7 @@ from sklearn import linear_model
 from sklearn.linear_model import LinearRegression
 from sklearn.preprocessing import PolynomialFeatures
 
-from common.gaia.with_rv import read_raw_gaia_with_rv_no_errors
+from common.gaia.with_rv import read_raw_gaia_with_rv_no_errors, read_gaia_dr3_with_rv_with_errors
 from numpy import sin, cos
 import numpy as np
 
@@ -13,10 +13,11 @@ from rv.degree_table import *
 
 
 def read_radec():
-    df = read_raw_gaia_with_rv_no_errors()
+    df = read_gaia_dr3_with_rv_with_errors()
     # df = df[(df.parallax > 0)]
-    df = df[(df.parallax > 1.0 / 8)]
+    df = df[(df.parallax > 1.0 / 7.013) & (np.abs(df.parallax_error / df.parallax) < 0.2)]
     print(len(df))
+    print(np.max(1000 / df.parallax))
     return SkyCoord(ra=df.ra.values * u.deg,
                  dec=df.dec.values * u.deg,
                  pm_ra_cosdec=df.pmra.values * u.mas / u.yr,

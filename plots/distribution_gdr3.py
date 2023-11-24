@@ -5,6 +5,7 @@ from matplotlib import pyplot as plt
 import numpy as np
 
 from common.gaia.with_rv import read_gaia_dr3_with_rv_with_errors
+from gaia.yt.gdr3.filter_with_error import read_gdr3
 
 
 def main():
@@ -99,6 +100,29 @@ def main():
     plt.title('Распределение относительной точности собственного движения\nзвезд GAIA DR3 with RV (склонение)')
     plt.savefig('dr3_with_rv/pmdec_error_sigma.png')
 
+    plt.clf()
+
+    df = read_gdr3()
+
+    plt.hist(df['phot_g_mean_mag'], bins=15, range=(5, 20))
+    plt.xlabel('Звездная величина G, mag')
+    plt.ylabel('Число звезд')
+    plt.title('Распределение звездной величины G')
+    plt.savefig('dr3_with_rv/phot_g_mean_mag.png')
+
+    plt.clf()
+
+    print(np.log10(0.49))
+
+    print(np.log10(df['parallax']))
+
+    print(df['parallax'])
+
+    plt.hist(df['phot_g_mean_mag'] + 5 + np.log10(df['parallax']), bins=15, range=(10, 25))
+    plt.xlabel('Абсолютная звездная величина G, mag')
+    plt.ylabel('Число звезд')
+    plt.title('Распределение абсолютной звездной величины G')
+    plt.savefig('dr3_with_rv/phot_g_abs_mag.png')
 
 if __name__ == '__main__':
     main()

@@ -6,6 +6,7 @@ from sklearn.preprocessing import PolynomialFeatures
 import statsmodels.api as sm
 
 from cartesian.common_cartesian import *
+from common.spherical import taj
 from curve.sistematic3d import show_velocity
 
 
@@ -14,9 +15,10 @@ def compute_full_quadric_decomposition_lasso():
 
     X1 = df[['x', 'y', 'z']]
 
-    p = PolynomialFeatures(degree=2).fit(X1)
+    f = PolynomialFeatures(degree=2)
+    p = f.fit(X1)
 
-    X = pd.DataFrame(p.transform(X1), columns=p.get_feature_names(X1.columns))
+    X = pd.DataFrame(p.transform(X1), columns=p.get_feature_names_out(X1.columns))
 
     alpha = 5
 
