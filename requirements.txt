@@ -1,12 +1,12 @@
 astropy
 numpy
 pandas
-healpy
+# healpy
 statsmodels
 astroquery
-healpy
 statsmodels
 scikit-learn
 astroquery
 wheel
 matplotlib
+gala

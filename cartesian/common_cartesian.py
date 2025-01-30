@@ -1,3 +1,4 @@
+import numpy
 from astropy.coordinates import SkyCoord, Distance, Galactic, Galactocentric
 from astropy import units as u
 import pandas as pd
@@ -12,12 +13,32 @@ import numpy as np
 from rv.degree_table import *
 
 
-def read_radec():
+pizza = None
+
+def read_and_filter():
+    global pizza
+    if pizza is not None:
+        return pizza
+
     df = read_gaia_dr3_with_rv_with_errors()
-    # df = df[(df.parallax > 0)]
-    df = df[(df.parallax > 1.0 / 7.013) & (np.abs(df.parallax_error / df.parallax) < 0.2)]
+    df = df[(df.parallax > 0)]
+    # df = df[(df.parallax > 1.0 / 7.013) & (np.abs(df.parallax_error / df.parallax) < 0.2)]
+    # df = df[(df.parallax > 0) & (np.abs(df.parallax_error / df.parallax) < numpy.sqrt(5) / 9)]
+    df = df.sort_values(by='parallax', ascending=False)
+    df = (df
+          .head(30000000)
+          # .sample(1000000)
+          )
+    print("got dataframe")
     print(len(df))
     print(np.max(1000 / df.parallax))
+
+    pizza = df
+
+    return df
+
+def read_radec():
+    df = read_and_filter()
     return SkyCoord(ra=df.ra.values * u.deg,
                  dec=df.dec.values * u.deg,
                  pm_ra_cosdec=df.pmra.values * u.mas / u.yr,
@@ -54,7 +75,12 @@ def to_cartesian(g, pc=False):
 
 def read_gaia_with_rv_cartesian():
     g = read_galactic()
-    return to_cartesian(g, pc=True)
+    df = to_cartesian(g, pc=True)
+    # df = df[(abs(df.x) < 1)]
+    # df.reset_index(drop=True, inplace=True)
+    # print('pasta')
+    # print(df)
+    return df
 
 
 def read_gaia_with_rv_residuals(degree):
